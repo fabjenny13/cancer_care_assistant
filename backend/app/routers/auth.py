@@ -9,6 +9,7 @@ from app.core.security import (
 from app.db.database import get_db
 from app.models.user import User
 from app.schemas.auth import (AuthResponse, LoginRequest, RegisterRequest, UserResponse)
+from app.core.dependencies import get_current_user
 
 
 router = APIRouter(
@@ -88,4 +89,15 @@ def login(
 
     return AuthResponse(
         access_token=access_token
+    )
+
+
+@router.get("/me", response_model=UserResponse)
+def get_me(
+    current_user: User = Depends(get_current_user)
+):
+    return UserResponse(
+        id=str(current_user.id),
+        email=current_user.email,
+        is_active=current_user.is_active
     )
