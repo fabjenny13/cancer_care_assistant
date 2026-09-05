@@ -69,6 +69,14 @@ class SafetyEvent(Base):
         nullable=False
     )
 
+    updated_at = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )
+
+
     resolved_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True)
     )

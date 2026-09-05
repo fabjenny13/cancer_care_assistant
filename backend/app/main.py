@@ -7,6 +7,7 @@ from app.routers.auth import router as auth_router
 from app.routers.profile import router as profile_router
 from app.routers.conversation import router as conversation_router
 from app.routers.mood import router as mood_router
+from app.routers.safety import router as safety_router
 
 
 app = FastAPI(
@@ -18,6 +19,7 @@ app.include_router(auth_router)
 app.include_router(profile_router)
 app.include_router(conversation_router)
 app.include_router(mood_router)
+app.include_router(safety_router)
 
 @app.get("/")
 def root():
