@@ -20,3 +20,8 @@ class SafetyEventResponse(BaseModel):
     description: str
     created_at: datetime
     updated_at: datetime
+    resolved_at: datetime | None
+
+
+class SafetyEventUpdate(BaseModel):
+    status: str
