@@ -11,6 +11,7 @@ function AIAssistant() {
   const [conversationId, setConversationId] = useState(null);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState([]);
+  const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
 
 
   // const [messages, setMessages] = useState([
@@ -689,6 +690,18 @@ async function sendMessage(textToSend = message) {
 
   setMessage("");
 
+
+  setMessages((prev) => [
+  ...prev,
+  {
+    id: Date.now(),
+    sender: "user",
+    text: text
+  }
+]);
+
+setIsGeneratingResponse(true);
+
   try {
     // 1. Save user message to backend
     const userResponse = await fetch(
@@ -710,16 +723,6 @@ async function sendMessage(textToSend = message) {
     }
 
     const savedUserMessage = await userResponse.json();
-
-    // 2. Display user message
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: savedUserMessage.id,
-        sender: "user",
-        text: savedUserMessage.content
-      }
-    ]);
 
 
     if (isFirstMessage) {
@@ -766,10 +769,12 @@ async function sendMessage(textToSend = message) {
     // 3. command handling
     const commandResponse = handleCommand(text);
 
+    
     // 4. Generate AI response
     setTimeout(async () => {
       const aiText = commandResponse || getAIResponse(text);
 
+      setIsGeneratingResponse(false);
       // Display AI response
       setMessages((prev) => [
         ...prev,
@@ -1165,7 +1170,9 @@ async function sendMessage(textToSend = message) {
       <p>Loading conversation...</p>
     </div>
   ) : (
-    messages.map((item) => (
+
+    <>
+    {messages.map((item) => (
       <div
         key={item.id}
         className={
@@ -1206,7 +1213,23 @@ async function sendMessage(textToSend = message) {
           </div>
         )}
       </div>
-    ))
+    ))}
+
+    {isGeneratingResponse && (
+  <div className="message-row">
+    <div className="message-avatar">
+      🤖
+    </div>
+
+    <div className="message-bubble ai-bubble typing-bubble">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+)}
+
+</>
   )}
 
 </div>
