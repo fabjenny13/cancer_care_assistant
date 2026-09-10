@@ -642,10 +642,22 @@ useEffect(() => {
 
   }
 
-
+ 
   // =====================================================
   // SEND MESSAGE
   // =====================================================
+
+
+   function generateConversationTitle(text) {
+  const cleanedText = text.trim();
+
+  if (cleanedText.length <= 35) {
+    return cleanedText;
+  }
+
+  return cleanedText.substring(0, 35).trim() + "...";
+}
+
 
 async function sendMessage(textToSend = message) {
   const text = textToSend.trim();
@@ -653,6 +665,9 @@ async function sendMessage(textToSend = message) {
   if (!text || !conversationId) return;
 
   const token = localStorage.getItem("access_token");
+  
+  const isFirstMessage = messages.length === 0;
+
 
   setMessage("");
 
@@ -687,6 +702,48 @@ async function sendMessage(textToSend = message) {
         text: savedUserMessage.content
       }
     ]);
+
+
+    if (isFirstMessage) {
+  const newTitle = generateConversationTitle(text);
+
+  try {
+    const titleResponse = await fetch(
+      `http://localhost:8000/conversations/${conversationId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: newTitle
+        })
+      }
+    );
+
+    if (titleResponse.ok) {
+      const updatedConversation =
+        await titleResponse.json();
+
+      setConversations((prev) =>
+        prev.map((conversation) =>
+          conversation.id === conversationId
+            ? {
+                ...conversation,
+                title: updatedConversation.title
+              }
+            : conversation
+        )
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Failed to update conversation title:",
+      error
+    );
+  }
+}
 
     // 3. command handling
     const commandResponse = handleCommand(text);

@@ -7,7 +7,8 @@ from app.models.conversation import Conversation
 from app.models.user import User
 from app.schemas.conversation import (
     ConversationCreate,
-    ConversationResponse
+    ConversationResponse,
+    ConversationUpdate
 )
 
 from app.schemas.message import MessageCreate, MessageResponse
@@ -203,4 +204,44 @@ def create_ai_message(
         sender=message.sender.value,
         content=message.content,
         created_at=message.created_at
+    )
+
+
+@router.patch(
+    "/{conversation_id}",
+    response_model=ConversationResponse
+)
+def update_conversation(
+    conversation_id: str,
+    data: ConversationUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    conversation = (
+        db.query(Conversation)
+        .filter(
+            Conversation.id == conversation_id,
+            Conversation.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not conversation:
+        raise HTTPException(
+            status_code=404,
+            detail="Conversation not found"
+        )
+
+    conversation.title = data.title
+    conversation.updated_at = func.now()
+
+    db.commit()
+    db.refresh(conversation)
+
+    return ConversationResponse(
+        id=str(conversation.id),
+        user_id=str(conversation.user_id),
+        title=conversation.title,
+        created_at=conversation.created_at,
+        updated_at=conversation.updated_at
     )
