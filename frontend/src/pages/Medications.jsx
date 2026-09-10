@@ -209,7 +209,7 @@ function Medications() {
           </p>
 
           <h1>
-            Medications 💊
+            Medications 
           </h1>
 
           <p className="subtitle">
@@ -267,9 +267,6 @@ function Medications() {
 
           </div>
 
-          <span className="card-icon">
-            💊
-          </span>
 
         </div>
 
@@ -408,9 +405,6 @@ function Medications() {
 
           </div>
 
-          <span className="card-icon">
-            💊
-          </span>
 
         </div>
 

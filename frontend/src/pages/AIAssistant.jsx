@@ -994,23 +994,9 @@ setIsGeneratingResponse(true);
     <main className="main-content ai-page">
 
       <div className="top-header">
-
-        <div>
-
           <p className="breadcrumb">
             Home / AI Assistant
           </p>
-
-          <h1>
-            AI Assistant 🤖
-          </h1>
-
-          <p className="subtitle">
-            A supportive space to ask questions, share concerns,
-            and organize your health information.
-          </p>
-
-        </div>
 
       </div>
 
@@ -1032,11 +1018,13 @@ setIsGeneratingResponse(true);
           </div>
 
           <h2>
-            I'm here to listen. 💙
+            I'm here to listen. 💙 
+
           </h2>
 
           <p>
-            Type your thoughts or use the microphone
+            This is a supportive space to ask questions, share concerns,
+            and organize your health information. Type your thoughts or use the microphone
             if you'd rather speak.
           </p>
 
