@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../api.js";
 
 function Login({ onLogin }) {
 
@@ -9,7 +10,7 @@ function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
 
     event.preventDefault();
 
@@ -18,12 +19,25 @@ function Login({ onLogin }) {
       return;
     }
 
-    // Demo login
-    localStorage.setItem("cancercare_logged_in", "true");
 
-    onLogin();
-
-    navigate("/dashboard");
+    try {
+      const data = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+    
+      localStorage.setItem("access_token", data.access_token);
+    
+      // Continue to your existing post-login navigation
+      navigate("/dashboard");
+    
+      onLogin();
+    } catch (error) {
+      setError(error.message);
+    }
   }
 
   return (
