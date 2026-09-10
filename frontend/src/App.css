@@ -48,10 +48,10 @@ button {
 
 .sidebar {
   width: 270px;
-  min-height: 100vh;
+  height: 100vh;
+  box-sizing: border-box;
 
   background: #ffffff;
-
   border-right: 1px solid #e8edf3;
 
   padding: 28px 18px;
@@ -63,8 +63,9 @@ button {
   left: 0;
   top: 0;
   bottom: 0;
-}
 
+  overflow-y: auto;
+}
 
 .sidebar-logo {
   display: flex;
