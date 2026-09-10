@@ -114,10 +114,13 @@ useEffect(() => {
 useEffect(() => {
   if (!conversationId) return;
 
+  let cancelled = false;
+
   async function loadMessages() {
     const token = localStorage.getItem("access_token");
 
     setLoadingMessages(true);
+    setMessages([]);
 
     try {
       const response = await fetch(
@@ -135,6 +138,9 @@ useEffect(() => {
 
       const savedMessages = await response.json();
 
+      // Ignore this response if user switched conversations
+      if (cancelled) return;
+
       setMessages(
         savedMessages.map((message) => ({
           id: message.id,
@@ -145,21 +151,33 @@ useEffect(() => {
           text: message.content
         }))
       );
+
     } catch (error) {
+      // Ignore errors from cancelled requests
+      if (cancelled) return;
+
       console.error(
         "Failed to load messages:",
         error
       );
 
       setMessages([]);
+
     } finally {
-      setLoadingMessages(false);
+      if (!cancelled) {
+        setLoadingMessages(false);
+      }
     }
   }
 
   loadMessages();
-}, [conversationId]);
 
+  // Runs when conversationId changes
+  return () => {
+    cancelled = true;
+  };
+
+}, [conversationId]);
 
 
   // =====================================================
@@ -1141,67 +1159,57 @@ async function sendMessage(textToSend = message) {
 
         <div className="chat-messages">
 
-          {messages.map((item) => (
+  {loadingMessages ? (
+    <div className="messages-loader">
+      <div className="loader-spinner"></div>
+      <p>Loading conversation...</p>
+    </div>
+  ) : (
+    messages.map((item) => (
+      <div
+        key={item.id}
+        className={
+          item.sender === "user"
+            ? "message-row user-message-row"
+            : "message-row"
+        }
+      >
+        {item.sender === "ai" && (
+          <div className="message-avatar">
+            🤖
+          </div>
+        )}
 
-            <div
-              key={item.id}
-              className={
-                item.sender === "user"
-                  ? "message-row user-message-row"
-                  : "message-row"
-              }
-            >
-
-              {item.sender === "ai" && (
-
-                <div className="message-avatar">
-                  🤖
-                </div>
-
-              )}
-
-
-              <div
-                className={
-                  item.sender === "user"
-                    ? "message-bubble user-bubble"
-                    : "message-bubble ai-bubble"
-                }
-              >
-
-                {item.text}
-
-              </div>
-
-
-              {item.sender === "ai" && (
-
-                <button
-                  className="speak-message-button"
-                  onClick={() =>
-                    speakResponse(item.text)
-                  }
-                  title="Read response aloud"
-                >
-                  🔊
-                </button>
-
-              )}
-
-
-              {item.sender === "user" && (
-
-                <div className="message-avatar user-avatar-chat">
-                  P
-                </div>
-
-              )}
-
-            </div>
-
-          ))}
-
+        <div
+          className={
+            item.sender === "user"
+              ? "message-bubble user-bubble"
+              : "message-bubble ai-bubble"
+          }
+        >
+          {item.text}
         </div>
+
+        {item.sender === "ai" && (
+          <button
+            className="speak-message-button"
+            onClick={() => speakResponse(item.text)}
+            title="Read response aloud"
+          >
+            🔊
+          </button>
+        )}
+
+        {item.sender === "user" && (
+          <div className="message-avatar user-avatar-chat">
+            P
+          </div>
+        )}
+      </div>
+    ))
+  )}
+
+</div>
 
 
         <div className="suggestions-section">
