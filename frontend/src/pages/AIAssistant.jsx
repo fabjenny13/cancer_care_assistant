@@ -1,24 +1,29 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function AIAssistant() {
 
   const navigate = useNavigate();
 
   const [message, setMessage] = useState("");
+  const [conversationId, setConversationId] = useState(null);
+  const [loadingMessages, setLoadingMessages] = useState(true);
+  const [messages, setMessages] = useState([]);
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "ai",
-      text: "Hello 💙 I'm your CancerCare AI Assistant. I'm here to listen, help you organize your health information, and guide you toward appropriate support."
-    },
-    {
-      id: 2,
-      sender: "ai",
-      text: "You can type your thoughts or use the microphone 🎤 if you'd rather speak."
-    }
-  ]);
+
+  // const [messages, setMessages] = useState([
+  //   {
+  //     id: 1,
+  //     sender: "ai",
+  //     text: "Hello 💙 I'm your CancerCare AI Assistant. I'm here to listen, help you organize your health information, and guide you toward appropriate support."
+  //   },
+  //   {
+  //     id: 2,
+  //     sender: "ai",
+  //     text: "You can type your thoughts or use the microphone 🎤 if you'd rather speak."
+  //   }
+  // ]);
 
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -34,6 +39,90 @@ function AIAssistant() {
     "I need help organizing my medicines"
   ];
 
+//LOAD CONVERSATION
+  useEffect(() => {
+  async function loadConversation() {
+    const token = localStorage.getItem("access_token");
+
+    try {
+      // Get existing conversations
+      const response = await fetch(
+        "http://localhost:8000/conversations",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load conversations");
+      }
+
+      const conversations = await response.json();
+
+      let conversation;
+
+      if (conversations.length > 0) {
+        // Use the most recently updated conversation
+        conversation = conversations[0];
+      } else {
+        // Create the first conversation
+        const createResponse = await fetch(
+          "http://localhost:8000/conversations",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              title: "CancerCare Assistant"
+            })
+          }
+        );
+
+        if (!createResponse.ok) {
+          throw new Error("Failed to create conversation");
+        }
+
+        conversation = await createResponse.json();
+      }
+
+      setConversationId(conversation.id);
+
+      // Load messages
+      const messagesResponse = await fetch(
+        `http://localhost:8000/conversations/${conversation.id}/messages`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!messagesResponse.ok) {
+        throw new Error("Failed to load messages");
+      }
+
+      const savedMessages = await messagesResponse.json();
+
+      setMessages(
+        savedMessages.map((message) => ({
+          id: message.id,
+          sender: message.sender === "ASSISTANT" ? "ai" : "user",
+          text: message.content
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to load conversation:", error);
+    } finally {
+      setLoadingMessages(false);
+    }
+  }
+
+  loadConversation();
+}, []);
 
   // =====================================================
   // DATE HELPER
@@ -520,76 +609,90 @@ function AIAssistant() {
   // SEND MESSAGE
   // =====================================================
 
-  function sendMessage(
-    textToSend = message
-  ) {
+async function sendMessage(textToSend = message) {
+  const text = textToSend.trim();
 
-    const cleanMessage =
-      textToSend.trim();
+  if (!text || !conversationId) return;
 
-    if (!cleanMessage) {
-      return;
-    }
+  const token = localStorage.getItem("access_token");
 
+  setMessage("");
 
-    const userMessage = {
-
-      id: Date.now(),
-
-      sender: "user",
-
-      text: cleanMessage
-
-    };
-
-
-    setMessages(
-      (previousMessages) => [
-        ...previousMessages,
-        userMessage
-      ]
+  try {
+    // 1. Save user message to backend
+    const userResponse = await fetch(
+      `http://localhost:8000/conversations/${conversationId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          content: text
+        })
+      }
     );
 
+    if (!userResponse.ok) {
+      throw new Error("Failed to save user message");
+    }
 
-    setMessage("");
+    const savedUserMessage = await userResponse.json();
 
+    // 2. Display user message
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: savedUserMessage.id,
+        sender: "user",
+        text: savedUserMessage.content
+      }
+    ]);
 
-    const commandResponse =
-      handleCommand(cleanMessage);
+    // 3. command handling
+    const commandResponse = handleCommand(text);
 
+    // 4. Generate AI response
+    setTimeout(async () => {
+      const aiText = commandResponse || getAIResponse(text);
 
-    setTimeout(() => {
+      // Display AI response
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          sender: "ai",
+          text: aiText
+        }
+      ]);
 
-      const response =
-        commandResponse ||
-        getAIResponse(cleanMessage);
+      // 5. Save AI response to backend
+      try {
+        await fetch(
+          `http://localhost:8000/conversations/${conversationId}/messages/ai`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              content: aiText
+            })
+          }
+        );
+      } catch (error) {
+        console.error("Failed to save AI message:", error);
+      }
 
-
-      const aiMessage = {
-
-        id: Date.now() + 1,
-
-        sender: "ai",
-
-        text: response
-
-      };
-
-
-      setMessages(
-        (previousMessages) => [
-          ...previousMessages,
-          aiMessage
-        ]
-      );
-
-
-      speakResponse(response);
-
+      speakText(aiText);
     }, 500);
 
+  } catch (error) {
+    console.error("Failed to send message:", error);
   }
-
+}
 
   // =====================================================
   // VOICE INPUT
