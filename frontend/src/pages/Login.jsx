@@ -9,10 +9,13 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   async function handleSubmit(event) {
 
     event.preventDefault();
+
+    setIsLoggingIn(true);
 
     if (!email || !password) {
       alert("Please enter your email and password.");
@@ -37,6 +40,8 @@ function Login({ onLogin }) {
       onLogin();
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoggingIn(false);
     }
   }
 
@@ -218,14 +223,19 @@ function Login({ onLogin }) {
             </label>
 
 
-            <button
-              type="submit"
-              className="login-button"
-            >
-              Sign In
-              <span>→</span>
-            </button>
-
+              <button
+                type="submit"
+                disabled={isLoggingIn}
+                className="login-button"
+              >
+                {isLoggingIn ? (
+                  <>
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
+              </button>
           </form>
 
 
