@@ -6,6 +6,7 @@ function AIAssistant() {
 
   const navigate = useNavigate();
 
+  const [conversations, setConversations] = useState([]);
   const [message, setMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
   const [loadingMessages, setLoadingMessages] = useState(true);
@@ -39,13 +40,15 @@ function AIAssistant() {
     "I need help organizing my medicines"
   ];
 
-//LOAD CONVERSATION
-  useEffect(() => {
-  async function loadConversation() {
+// =====================================================
+// LOAD CONVERSATIONS
+// =====================================================
+
+useEffect(() => {
+  async function loadConversations() {
     const token = localStorage.getItem("access_token");
 
     try {
-      // Get existing conversations
       const response = await fetch(
         "http://localhost:8000/conversations",
         {
@@ -59,15 +62,15 @@ function AIAssistant() {
         throw new Error("Failed to load conversations");
       }
 
-      const conversations = await response.json();
+      const data = await response.json();
 
-      let conversation;
+      setConversations(data);
 
-      if (conversations.length > 0) {
-        // Use the most recently updated conversation
-        conversation = conversations[0];
+      // Load the most recent conversation initially
+      if (data.length > 0) {
+        setConversationId(data[0].id);
       } else {
-        // Create the first conversation
+        // No conversations yet → create one
         const createResponse = await fetch(
           "http://localhost:8000/conversations",
           {
@@ -86,14 +89,39 @@ function AIAssistant() {
           throw new Error("Failed to create conversation");
         }
 
-        conversation = await createResponse.json();
+        const newConversation = await createResponse.json();
+
+        setConversations([newConversation]);
+        setConversationId(newConversation.id);
       }
+    } catch (error) {
+      console.error(
+        "Failed to load conversations:",
+        error
+      );
+    }
+  }
 
-      setConversationId(conversation.id);
+  loadConversations();
+}, []);
 
-      // Load messages
-      const messagesResponse = await fetch(
-        `http://localhost:8000/conversations/${conversation.id}/messages`,
+
+
+// =====================================================
+// LOAD MESSAGES FOR SELECTED CONVERSATION
+// =====================================================
+
+useEffect(() => {
+  if (!conversationId) return;
+
+  async function loadMessages() {
+    const token = localStorage.getItem("access_token");
+
+    setLoadingMessages(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/conversations/${conversationId}/messages`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -101,28 +129,38 @@ function AIAssistant() {
         }
       );
 
-      if (!messagesResponse.ok) {
+      if (!response.ok) {
         throw new Error("Failed to load messages");
       }
 
-      const savedMessages = await messagesResponse.json();
+      const savedMessages = await response.json();
 
       setMessages(
         savedMessages.map((message) => ({
           id: message.id,
-          sender: message.sender === "ASSISTANT" ? "ai" : "user",
+          sender:
+            message.sender === "ASSISTANT"
+              ? "ai"
+              : "user",
           text: message.content
         }))
       );
     } catch (error) {
-      console.error("Failed to load conversation:", error);
+      console.error(
+        "Failed to load messages:",
+        error
+      );
+
+      setMessages([]);
     } finally {
       setLoadingMessages(false);
     }
   }
 
-  loadConversation();
-}, []);
+  loadMessages();
+}, [conversationId]);
+
+
 
   // =====================================================
   // DATE HELPER
@@ -929,39 +967,120 @@ async function sendMessage(textToSend = message) {
 
       <section className="chat-card">
 
+        <div className="chat-layout">
+
+        {/* ================= CHAT HISTORY ================= */}
+
+        <aside className="chat-history">
+
+          <div className="history-header">
+            <h3>Chat History</h3>
+
+            <button
+              className="new-chat-button"
+              onClick={async () => {
+                const token = localStorage.getItem("access_token");
+              
+                try {
+                  const response = await fetch(
+                    "http://localhost:8000/conversations",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                      },
+                      body: JSON.stringify({
+                        title: "CancerCare Assistant"
+                      })
+                    }
+                  );
+                
+                  if (!response.ok) {
+                    throw new Error("Failed to create conversation");
+                  }
+                
+                  const newConversation = await response.json();
+                
+                  setConversations((prev) => [
+                    newConversation,
+                    ...prev
+                  ]);
+                
+                  setConversationId(newConversation.id);
+                
+                } catch (error) {
+                  console.error(
+                    "Failed to create conversation:",
+                    error
+                  );
+                }
+              }}
+            >
+              + New Chat
+            </button>
+          </div>
+            
+            
+          <div className="conversation-list">
+            
+            {conversations.map((conversation) => (
+            
+              <button
+                key={conversation.id}
+                className={
+                  conversation.id === conversationId
+                    ? "conversation-item active"
+                    : "conversation-item"
+                }
+                onClick={() => {
+                  setConversationId(conversation.id);
+                }}
+              >
+                <span className="conversation-icon">
+                  💬
+                </span>
+              
+                <span className="conversation-title">
+                  {conversation.title || "CancerCare Assistant"}
+                </span>
+              </button>
+
+            ))}
+
+    </div>
+
+  </aside>
+
+
+  {/* ================= ACTUAL CHAT ================= */}
+
+  <div className="chat-main">
+
         <div className="chat-header">
 
-          <div className="chat-title">
-
-            <div className="chat-avatar">
-              🤖
-            </div>
-
-            <div>
-
-              <h2>
-                CancerCare Assistant
-              </h2>
-
-              <span>
-                Voice & Text Support • Patient-friendly
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div className="online-status">
-
-            <span></span>
-
-            Online
-
-          </div>
-
+      <div className="chat-title">
+        <div className="chat-avatar">
+          🤖
         </div>
 
+        <div>
+          <h2>
+            CancerCare Assistant
+          </h2>
+
+          <span>
+            Voice & Text Support • Patient-friendly
+          </span>
+        </div>
+      </div>
+
+      <div className="online-status">
+        <span></span>
+        Online
+      </div>
+
+        </div>
 
         <div className="chat-messages">
 
@@ -1161,6 +1280,10 @@ async function sendMessage(textToSend = message) {
           </div>
 
         </div>
+
+      </div> {/* chat-main */}
+
+        </div> {/* chat-layout */}
 
       </section>
 
