@@ -16,8 +16,8 @@ body {
     Arial,
     sans-serif;
 
-  background: #f5f8fc;
-  color: #243447;
+  background: #131722;
+  color: #cbd5e1;
 }
 
 button,
@@ -51,8 +51,8 @@ button {
   height: 100vh;
   box-sizing: border-box;
 
-  background: #ffffff;
-  border-right: 1px solid #e8edf3;
+  background: #1a202c;
+  border-right: 1px solid #2d3748;
 
   padding: 28px 18px;
 
@@ -74,7 +74,7 @@ button {
 
   padding: 4px 10px 30px;
 
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid #2d3748;
 }
 
 
@@ -84,7 +84,7 @@ button {
 
   border-radius: 13px;
 
-  background: #e9f4ff;
+  background: #253346;
 
   display: flex;
   align-items: center;
@@ -97,7 +97,7 @@ button {
 .sidebar-logo h2 {
   margin: 0;
 
-  color: #1565c0;
+  color: #60a5fa;
 
   font-size: 20px;
 }
@@ -108,7 +108,7 @@ button {
 
   margin-top: 3px;
 
-  color: #8a98a9;
+  color: #8fa0b5;
 
   font-size: 12px;
 }
@@ -128,7 +128,7 @@ button {
 
   letter-spacing: 1px;
 
-  color: #9aa7b5;
+  color: #718096;
 }
 
 
@@ -150,7 +150,7 @@ button {
 
   border-radius: 10px;
 
-  color: #607080;
+  color: #a0aec0;
 
   text-decoration: none;
 
@@ -161,18 +161,18 @@ button {
 
 
 .nav-item:hover {
-  background: #f1f7fd;
+  background: #232d3f;
 
-  color: #1565c0;
+  color: #60a5fa;
 
   transform: translateX(2px);
 }
 
 
 .nav-item.active {
-  background: #eaf4ff;
+  background: #2a384e;
 
-  color: #1565c0;
+  color: #60a5fa;
 
   font-weight: 600;
 }
@@ -192,7 +192,7 @@ button {
 
   padding-top: 20px;
 
-  border-top: 1px solid #edf1f5;
+  border-top: 1px solid #2d3748;
 }
 
 
@@ -201,7 +201,7 @@ button {
 
   padding: 12px;
 
-  background: #f7faff;
+  background: #232d3f;
 
   border-radius: 12px;
 
@@ -219,9 +219,9 @@ button {
 
   border-radius: 50%;
 
-  background: #dceeff;
+  background: #2c3e55;
 
-  color: #1565c0;
+  color: #60a5fa;
 
   display: flex;
 
@@ -237,7 +237,7 @@ button {
 
   font-size: 13px;
 
-  color: #26384d;
+  color: #e2e8f0;
 }
 
 
@@ -246,7 +246,7 @@ button {
 
   font-size: 11px;
 
-  color: #8997a7;
+  color: #8fa0b5;
 
   margin-top: 3px;
 }
@@ -292,7 +292,7 @@ button {
 .breadcrumb {
   margin: 0 0 8px;
 
-  color: #98a5b3;
+  color: #8fa0b5;
 
   font-size: 12px;
 
@@ -303,7 +303,7 @@ button {
 .top-header h1 {
   margin: 0;
 
-  color: #172b4d;
+  color: #f1f5f9;
 
   font-size: 30px;
 
@@ -314,22 +314,22 @@ button {
 .subtitle {
   margin: 8px 0 0;
 
-  color: #7b8998;
+  color: #8fa0b5;
 
   font-size: 15px;
 }
 
 
 .header-date {
-  background: white;
+  background: #1a202c;
 
-  border: 1px solid #e5ebf2;
+  border: 1px solid #2d3748;
 
   padding: 11px 15px;
 
   border-radius: 10px;
 
-  color: #657587;
+  color: #a0aec0;
 
   font-size: 13px;
 }
@@ -342,11 +342,11 @@ button {
 .welcome-banner {
   background: linear-gradient(
     135deg,
-    #eaf5ff,
-    #f7fbff
+    #232d3f,
+    #1d2636
   );
 
-  border: 1px solid #dcecfb;
+  border: 1px solid #2d3d54;
 
   border-radius: 18px;
 
@@ -369,7 +369,7 @@ button {
 
   letter-spacing: 1.2px;
 
-  color: #3581c9;
+  color: #60a5fa;
 }
 
 
@@ -378,7 +378,7 @@ button {
 
   margin: 10px 0;
 
-  color: #1c3554;
+  color: #f1f5f9;
 
   font-size: 23px;
 }
@@ -389,7 +389,7 @@ button {
 
   margin: 0;
 
-  color: #6f8193;
+  color: #a0aec0;
 
   line-height: 1.6;
 
@@ -403,7 +403,7 @@ button {
 
   border-radius: 50%;
 
-  background: white;
+  background: #1a202c;
 
   display: flex;
 
@@ -412,7 +412,7 @@ button {
 
   font-size: 40px;
 
-  box-shadow: 0 8px 25px rgba(60, 100, 140, 0.08);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -433,9 +433,9 @@ button {
 
 
 .stat-card {
-  background: white;
+  background: #1a202c;
 
-  border: 1px solid #e7edf3;
+  border: 1px solid #2d3748;
 
   border-radius: 15px;
 
@@ -455,7 +455,7 @@ button {
   transform: translateY(-3px);
 
   box-shadow:
-    0 10px 30px rgba(40, 70, 100, 0.07);
+    0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -475,26 +475,26 @@ button {
 
 
 .stat-icon.blue {
-  background: #eaf4ff;
+  background: #28374d;
 }
 
 .stat-icon.purple {
-  background: #f1ecff;
+  background: #332a48;
 }
 
 .stat-icon.green {
-  background: #eaf9f0;
+  background: #1f3a2c;
 }
 
 .stat-icon.orange {
-  background: #fff4e6;
+  background: #403220;
 }
 
 
 .stat-label {
   font-size: 10px;
 
-  color: #9aa6b2;
+  color: #8fa0b5;
 
   font-weight: 700;
 
@@ -505,7 +505,7 @@ button {
 .stat-card h3 {
   margin: 5px 0 2px;
 
-  color: #243b53;
+  color: #e2e8f0;
 
   font-size: 24px;
 }
@@ -514,7 +514,7 @@ button {
 .stat-card p {
   margin: 0;
 
-  color: #8a98a8;
+  color: #8fa0b5;
 
   font-size: 11px;
 }
@@ -542,9 +542,9 @@ button {
 
 .dashboard-card,
 .form-card {
-  background: white;
+  background: #1a202c;
 
-  border: 1px solid #e7edf3;
+  border: 1px solid #2d3748;
 
   border-radius: 16px;
 
@@ -568,7 +568,7 @@ button {
 .card-header h2 {
   margin: 0;
 
-  color: #243b53;
+  color: #e2e8f0;
 
   font-size: 18px;
 }
@@ -577,7 +577,7 @@ button {
 .card-header p {
   margin: 6px 0 0;
 
-  color: #8a98a8;
+  color: #8fa0b5;
 
   font-size: 13px;
 }
@@ -589,7 +589,7 @@ button {
 
   border-radius: 10px;
 
-  background: #f0f6fc;
+  background: #28374d;
 
   display: flex;
 
@@ -609,7 +609,7 @@ button {
 
   padding: 40px 20px;
 
-  color: #8291a2;
+  color: #8fa0b5;
 }
 
 
@@ -623,7 +623,7 @@ button {
 .empty-state h3 {
   margin: 0 0 7px;
 
-  color: #526477;
+  color: #cbd5e1;
 
   font-size: 15px;
 }
@@ -632,7 +632,7 @@ button {
 .empty-state p {
   margin: 0;
 
-  color: #8b98a7;
+  color: #8fa0b5;
 
   font-size: 13px;
 }
@@ -655,7 +655,7 @@ button {
 
   font-size: 12px;
 
-  color: #a0abb7;
+  color: #718096;
 }
 
 
@@ -670,7 +670,7 @@ button {
 
   gap: 18px;
 
-  background: #f8fbff;
+  background: #232d3f;
 
   border-radius: 12px;
 
@@ -686,7 +686,7 @@ button {
 .wellness-content h3 {
   margin: 0;
 
-  color: #334e68;
+  color: #e2e8f0;
 
   font-size: 16px;
 }
@@ -695,7 +695,7 @@ button {
 .wellness-content p {
   margin: 6px 0 0;
 
-  color: #7c8b99;
+  color: #a0aec0;
 
   font-size: 13px;
 }
@@ -732,7 +732,7 @@ button {
 .form-group label {
   margin-bottom: 8px;
 
-  color: #405469;
+  color: #cbd5e1;
 
   font-size: 13px;
 
@@ -747,13 +747,13 @@ button {
 
   padding: 13px 14px;
 
-  border: 1px solid #dbe3eb;
+  border: 1px solid #323f54;
 
   border-radius: 9px;
 
-  background: #fbfcfe;
+  background: #131722;
 
-  color: #334e68;
+  color: #e2e8f0;
 
   font-size: 14px;
 
@@ -766,12 +766,12 @@ button {
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  background: white;
+  background: #131722;
 
-  border-color: #68a8e0;
+  border-color: #60a5fa;
 
   box-shadow:
-    0 0 0 3px rgba(74, 144, 214, 0.08);
+    0 0 0 3px rgba(96, 165, 250, 0.2);
 }
 
 
@@ -785,9 +785,9 @@ button {
 .primary-button {
   border: none;
 
-  background: #1976d2;
+  background: #4080e0;
 
-  color: white;
+  color: #ffffff;
 
   padding: 12px 22px;
 
@@ -802,7 +802,7 @@ button {
 
 
 .primary-button:hover {
-  background: #1565c0;
+  background: #5090f0;
 
   transform: translateY(-1px);
 }
@@ -830,9 +830,9 @@ button {
 
   padding: 17px;
 
-  background: #f9fbfd;
+  background: #232d3f;
 
-  border: 1px solid #e8eef4;
+  border: 1px solid #2d3748;
 
   border-radius: 12px;
 }
@@ -853,7 +853,7 @@ button {
 
   border-radius: 10px;
 
-  background: #eaf4ff;
+  background: #28374d;
 
   display: flex;
 
@@ -865,19 +865,19 @@ button {
 
 
 .purple-icon {
-  background: #f1ecff;
+  background: #332a48;
 }
 
 
 .green-icon {
-  background: #eaf9f0;
+  background: #1f3a2c;
 }
 
 
 .record-item h3 {
   margin: 0 0 5px;
 
-  color: #334e68;
+  color: #e2e8f0;
 
   font-size: 15px;
 }
@@ -886,7 +886,7 @@ button {
 .record-item p {
   margin: 3px 0;
 
-  color: #8a98a8;
+  color: #8fa0b5;
 
   font-size: 12px;
 }
@@ -901,7 +901,7 @@ button {
 
   gap: 7px;
 
-  color: #718096;
+  color: #a0aec0;
 
   font-size: 12px;
 }
@@ -919,23 +919,23 @@ button {
 
 
 .severity.mild {
-  background: #eaf9f0;
+  background: #1f3a2c;
 
-  color: #298452;
+  color: #4ade80;
 }
 
 
 .severity.moderate {
-  background: #fff4e2;
+  background: #403220;
 
-  color: #a56b15;
+  color: #facc15;
 }
 
 
 .severity.severe {
-  background: #ffe9e9;
+  background: #442426;
 
-  color: #bd4545;
+  color: #f87171;
 }
 
 
@@ -956,20 +956,20 @@ button {
 
 
 .take-button {
-  border: 1px solid #b9d9f5;
+  border: 1px solid #3b506e;
 
-  background: #edf7ff;
+  background: #28374d;
 
-  color: #1976d2;
+  color: #60a5fa;
 }
 
 
 .taken-button {
-  border: 1px solid #b9e4c8;
+  border: 1px solid #26543b;
 
-  background: #eaf9f0;
+  background: #1f3a2c;
 
-  color: #27814e;
+  color: #4ade80;
 }
 
 
@@ -1000,9 +1000,9 @@ button {
 
   height: 105px;
 
-  border: 1px solid #e3e9ef;
+  border: 1px solid #323f54;
 
-  background: #fbfcfe;
+  background: #131722;
 
   border-radius: 15px;
 
@@ -1026,7 +1026,7 @@ button {
 
 
 .mood-option small {
-  color: #718096;
+  color: #a0aec0;
 
   font-size: 11px;
 }
@@ -1035,21 +1035,21 @@ button {
 .mood-option:hover {
   transform: translateY(-3px);
 
-  border-color: #9ac7ed;
+  border-color: #60a5fa;
 
-  background: #f5faff;
+  background: #232d3f;
 }
 
 
 .mood-option.selected {
-  border: 2px solid #1976d2;
+  border: 2px solid #4080e0;
 
-  background: #eaf4ff;
+  background: #28374d;
 }
 
 
 .mood-option.selected small {
-  color: #1565c0;
+  color: #60a5fa;
 
   font-weight: 600;
 }
@@ -1071,9 +1071,9 @@ button {
 
   padding: 17px 20px;
 
-  background: #eef8ff;
+  background: #232d3f;
 
-  border: 1px solid #d8ecfb;
+  border: 1px solid #2d3d54;
 
   border-radius: 12px;
 }
@@ -1085,7 +1085,7 @@ button {
 
 
 .wellness-note strong {
-  color: #315b7e;
+  color: #93c5fd;
 
   font-size: 13px;
 }
@@ -1094,7 +1094,7 @@ button {
 .wellness-note p {
   margin: 4px 0 0;
 
-  color: #6e8497;
+  color: #a0aec0;
 
   font-size: 12px;
 
@@ -1207,7 +1207,7 @@ button {
 .login-page {
   min-height: 100vh;
   display: flex;
-  background: #f5f8fc;
+  background: #131722;
 }
 
 
@@ -1219,9 +1219,9 @@ button {
   padding: 45px 70px;
   background: linear-gradient(
     145deg,
-    #eaf6ff 0%,
-    #f5fbff 55%,
-    #eef8ff 100%
+    #1d2636 0%,
+    #171f2c 55%,
+    #1a2230 100%
   );
 
   display: flex;
@@ -1242,7 +1242,7 @@ button {
 
   border-radius: 50%;
 
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.02);
 
   top: -160px;
   right: -120px;
@@ -1258,7 +1258,7 @@ button {
 
   border-radius: 50%;
 
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.015);
 
   bottom: -130px;
   left: -100px;
@@ -1283,7 +1283,7 @@ button {
 
   border-radius: 14px;
 
-  background: white;
+  background: #1a202c;
 
   display: flex;
   align-items: center;
@@ -1292,14 +1292,14 @@ button {
   font-size: 26px;
 
   box-shadow:
-    0 8px 25px rgba(50, 100, 150, 0.08);
+    0 8px 25px rgba(0, 0, 0, 0.25);
 }
 
 
 .login-brand h2 {
   margin: 0;
 
-  color: #1565c0;
+  color: #60a5fa;
 
   font-size: 21px;
 }
@@ -1310,7 +1310,7 @@ button {
 
   margin-top: 3px;
 
-  color: #8298aa;
+  color: #8fa0b5;
 
   font-size: 12px;
 }
@@ -1327,7 +1327,7 @@ button {
 
 
 .login-small-title {
-  color: #3581c9;
+  color: #60a5fa;
 
   font-size: 11px;
 
@@ -1340,7 +1340,7 @@ button {
 .login-message h1 {
   margin: 14px 0 18px;
 
-  color: #183b5d;
+  color: #f1f5f9;
 
   font-size: 43px;
 
@@ -1353,7 +1353,7 @@ button {
 .login-message > p {
   max-width: 550px;
 
-  color: #6c8295;
+  color: #a0aec0;
 
   font-size: 15px;
 
@@ -1384,9 +1384,9 @@ button {
 
   max-width: 520px;
 
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.03);
 
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   border-radius: 13px;
 }
@@ -1398,7 +1398,7 @@ button {
 
   flex-shrink: 0;
 
-  background: white;
+  background: #1a202c;
 
   border-radius: 11px;
 
@@ -1413,7 +1413,7 @@ button {
 .login-feature strong {
   display: block;
 
-  color: #36556f;
+  color: #cbd5e1;
 
   font-size: 13px;
 }
@@ -1422,7 +1422,7 @@ button {
 .login-feature p {
   margin: 4px 0 0;
 
-  color: #8396a6;
+  color: #a0aec0;
 
   font-size: 11px;
 
@@ -1436,7 +1436,7 @@ button {
   position: relative;
   z-index: 2;
 
-  color: #8da0b0;
+  color: #718096;
 
   font-size: 11px;
 }
@@ -1463,16 +1463,16 @@ button {
   width: 100%;
   max-width: 450px;
 
-  background: white;
+  background: #1a202c;
 
-  border: 1px solid #e5ebf2;
+  border: 1px solid #2d3748;
 
   border-radius: 20px;
 
   padding: 40px;
 
   box-shadow:
-    0 18px 60px rgba(35, 70, 100, 0.08);
+    0 18px 50px rgba(0, 0, 0, 0.3);
 }
 
 
@@ -1493,7 +1493,7 @@ button {
 
   border-radius: 15px;
 
-  background: #eaf4ff;
+  background: #28374d;
 
   display: flex;
 
@@ -1507,7 +1507,7 @@ button {
 .login-card-header h1 {
   margin: 0;
 
-  color: #243b53;
+  color: #e2e8f0;
 
   font-size: 27px;
 }
@@ -1516,7 +1516,7 @@ button {
 .login-card-header p {
   margin: 8px 0 0;
 
-  color: #8a98a8;
+  color: #8fa0b5;
 
   font-size: 13px;
 }
@@ -1534,7 +1534,7 @@ button {
 
   margin-bottom: 8px;
 
-  color: #405469;
+  color: #cbd5e1;
 
   font-size: 13px;
 
@@ -1549,13 +1549,13 @@ button {
 
   padding: 13px 14px;
 
-  border: 1px solid #dbe3eb;
+  border: 1px solid #323f54;
 
   border-radius: 9px;
 
-  background: #fbfcfe;
+  background: #131722;
 
-  color: #334e68;
+  color: #e2e8f0;
 
   font-size: 14px;
 
@@ -1566,12 +1566,12 @@ button {
 
 
 .login-form-group input:focus {
-  background: white;
+  background: #131722;
 
-  border-color: #68a8e0;
+  border-color: #60a5fa;
 
   box-shadow:
-    0 0 0 3px rgba(74, 144, 214, 0.08);
+    0 0 0 3px rgba(96, 165, 250, 0.2);
 }
 
 
@@ -1591,7 +1591,7 @@ button {
 
   padding: 0;
 
-  color: #1976d2;
+  color: #60a5fa;
 
   font-size: 11px;
 
@@ -1638,7 +1638,7 @@ button {
 
   margin-bottom: 22px;
 
-  color: #718096;
+  color: #a0aec0;
 
   font-size: 12px;
 
@@ -1647,7 +1647,7 @@ button {
 
 
 .remember-me input {
-  accent-color: #1976d2;
+  accent-color: #4080e0;
 }
 
 
@@ -1664,11 +1664,11 @@ button {
 
   background: linear-gradient(
     135deg,
-    #1976d2,
-    #2587df
+    #4080e0,
+    #3268c4
   );
 
-  color: white;
+  color: #ffffff;
 
   font-size: 14px;
 
@@ -1687,7 +1687,7 @@ button {
   transition: 0.2s;
 
   box-shadow:
-    0 7px 18px rgba(25, 118, 210, 0.18);
+    0 7px 18px rgba(64, 128, 224, 0.3);
 }
 
 
@@ -1695,7 +1695,7 @@ button {
   transform: translateY(-2px);
 
   box-shadow:
-    0 10px 24px rgba(25, 118, 210, 0.24);
+    0 10px 24px rgba(64, 128, 224, 0.4);
 }
 
 
@@ -1725,12 +1725,12 @@ button {
 
   flex: 1;
 
-  background: #edf1f5;
+  background: #2d3748;
 }
 
 
 .login-divider span {
-  color: #a1acb8;
+  color: #718096;
 
   font-size: 10px;
 
@@ -1750,7 +1750,7 @@ button {
 
   margin: 0;
 
-  color: #8a98a8;
+  color: #8fa0b5;
 
   font-size: 12px;
 }
@@ -1761,7 +1761,7 @@ button {
 
   background: transparent;
 
-  color: #1976d2;
+  color: #60a5fa;
 
   font-size: 12px;
 
@@ -1786,9 +1786,9 @@ button {
 
   padding: 12px;
 
-  background: #f7fbff;
+  background: #171f2c;
 
-  border: 1px solid #e4f0fa;
+  border: 1px solid #2d3d54;
 
   border-radius: 9px;
 }
@@ -1802,7 +1802,7 @@ button {
 .login-security p {
   margin: 0;
 
-  color: #8093a4;
+  color: #a0aec0;
 
   font-size: 10px;
 
@@ -1832,7 +1832,7 @@ button {
 
   background: transparent;
 
-  color: #8b99a8;
+  color: #8fa0b5;
 
   font-size: 18px;
 
@@ -1843,9 +1843,9 @@ button {
 
 
 .logout-button:hover {
-  background: #ffecec;
+  background: #442426;
 
-  color: #d95353;
+  color: #f87171;
 }
 
 
@@ -1929,9 +1929,9 @@ button {
 
 .chat-history {
   width: 240px;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid #2d3748;
   padding: 20px;
-  background: #f8f9fa;
+  background: #131722;
   flex-shrink: 0;
 }
 
@@ -1952,8 +1952,8 @@ button {
   border-radius: 8px;
   padding: 10px 12px;
   cursor: pointer;
-  background: #4f7bc2;
-  color: white;
+  background: #4080e0;
+  color: #ffffff;
   font-size: 14px;
 }
 
@@ -1964,6 +1964,7 @@ button {
 }
 
 .conversation-item {
+  color: #bab7b7;
   width: 100%;
   border: none;
   border-radius: 8px;
@@ -1977,11 +1978,11 @@ button {
 }
 
 .conversation-item:hover {
-  background: #eaf0f3;
+  background: #232d3f;
 }
 
 .conversation-item.active {
-  background: #dce2ee;
+  background: #2a384e;
 }
 
 .conversation-icon {
@@ -2012,7 +2013,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #6b7280;
+  color: #8fa0b5;
 }
 
 .messages-loader p {
@@ -2023,8 +2024,8 @@ button {
 .loader-spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid #dce2ee;
-  border-top: 3px solid #6168a9;
+  border: 3px solid #323f54;
+  border-top: 3px solid #60a5fa;
   border-radius: 50%;
   animation: chat-spinner 0.8s linear infinite;
 }
@@ -2050,11 +2051,11 @@ button {
 
   background: linear-gradient(
     135deg,
-    #eaf5ff,
-    #f8fbff
+    #232d3f,
+    #1d2636
   );
 
-  border: 1px solid #dcecfb;
+  border: 1px solid #2d3d54;
 }
 
 
@@ -2070,12 +2071,12 @@ button {
 
   border-radius: 18px;
 
-  background: white;
+  background: #1a202c;
 
   font-size: 32px;
 
   box-shadow:
-    0 8px 25px rgba(40, 90, 130, 0.08);
+    0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -2084,7 +2085,7 @@ button {
   align-items: center;
   gap: 7px;
 
-  color: #4382b5;
+  color: #60a5fa;
 
   font-size: 11px;
   font-weight: 600;
@@ -2097,14 +2098,14 @@ button {
 
   border-radius: 50%;
 
-  background: #42a66b;
+  background: #4ade80;
 }
 
 
 .ai-welcome-card h2 {
   margin: 6px 0;
 
-  color: #243f5b;
+  color: #e2e8f0;
 
   font-size: 21px;
 }
@@ -2113,7 +2114,7 @@ button {
 .ai-welcome-card p {
   margin: 0;
 
-  color: #75899b;
+  color: #a0aec0;
 
   font-size: 13px;
 
@@ -2124,16 +2125,16 @@ button {
 /* CHAT CARD */
 
 .chat-card {
-  background: white;
+  background: #1a202c;
 
-  border: 1px solid #e4ebf2;
+  border: 1px solid #2d3748;
 
   border-radius: 18px;
 
   overflow: hidden;
 
   box-shadow:
-    0 10px 35px rgba(40, 70, 100, 0.05);
+    0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -2148,7 +2149,7 @@ button {
 
   justify-content: space-between;
 
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid #2d3748;
 }
 
 
@@ -2172,7 +2173,7 @@ button {
 
   border-radius: 12px;
 
-  background: #eaf4ff;
+  background: #28374d;
 
   font-size: 21px;
 }
@@ -2181,7 +2182,7 @@ button {
 .chat-title h2 {
   margin: 0;
 
-  color: #2d4359;
+  color: #e2e8f0;
 
   font-size: 15px;
 }
@@ -2192,7 +2193,7 @@ button {
 
   margin-top: 4px;
 
-  color: #91a0ad;
+  color: #8fa0b5;
 
   font-size: 10px;
 }
@@ -2209,9 +2210,9 @@ button {
 
   border-radius: 20px;
 
-  background: #f0faf4;
+  background: #1f3a2c;
 
-  color: #4a9367;
+  color: #4ade80;
 
   font-size: 10px;
 
@@ -2225,7 +2226,7 @@ button {
 
   border-radius: 50%;
 
-  background: #4caf72;
+  background: #4ade80;
 }
 
 
@@ -2241,7 +2242,7 @@ button {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #6b7280;
+  background: #8fa0b5;
   animation: typing-dot 1.2s infinite ease-in-out;
 }
 
@@ -2274,7 +2275,7 @@ button {
 
   padding: 24px;
 
-  background: #fbfdff;
+  background: #131722;
 }
 
 
@@ -2311,16 +2312,16 @@ button {
   align-items: center;
   justify-content: center;
 
-  background: #eaf4ff;
+  background: #28374d;
 
   font-size: 16px;
 }
 
 
 .user-avatar-chat {
-  background: #dceeff;
+  background: #2c3e55;
 
-  color: #1565c0;
+  color: #60a5fa;
 
   font-size: 12px;
 
@@ -2340,20 +2341,20 @@ button {
 
 
 .ai-bubble {
-  background: white;
+  background: #232d3f;
 
-  border: 1px solid #e5ebf2;
+  border: 1px solid #2d3748;
 
-  color: #526477;
+  color: #cbd5e1;
 
   border-bottom-left-radius: 4px;
 }
 
 
 .user-bubble {
-  background: #1976d2;
+  background: #4080e0;
 
-  color: white;
+  color: #ffffff;
 
   border-bottom-right-radius: 4px;
 }
@@ -2364,9 +2365,9 @@ button {
 .suggestions-section {
   padding: 15px 22px;
 
-  border-top: 1px solid #edf1f5;
+  border-top: 1px solid #2d3748;
 
-  background: white;
+  background: #1a202c;
 }
 
 
@@ -2375,7 +2376,7 @@ button {
 
   margin-bottom: 9px;
 
-  color: #8c9aa8;
+  color: #8fa0b5;
 
   font-size: 10px;
 
@@ -2393,11 +2394,11 @@ button {
 
 
 .suggestion-list button {
-  border: 1px solid #dbe7f0;
+  border: 1px solid #323f54;
 
-  background: #f8fbfe;
+  background: #232d3f;
 
-  color: #52718b;
+  color: #a0aec0;
 
   border-radius: 20px;
 
@@ -2412,11 +2413,11 @@ button {
 
 
 .suggestion-list button:hover {
-  background: #eaf4ff;
+  background: #28374d;
 
-  border-color: #b8d8f3;
+  border-color: #405575;
 
-  color: #1976d2;
+  color: #60a5fa;
 }
 
 
@@ -2425,9 +2426,9 @@ button {
 .chat-input-section {
   padding: 16px 22px;
 
-  border-top: 1px solid #edf1f5;
+  border-top: 1px solid #2d3748;
 
-  background: white;
+  background: #1a202c;
 }
 
 
@@ -2440,23 +2441,23 @@ button {
 
   padding: 5px 5px 5px 13px;
 
-  border: 1px solid #d8e2eb;
+  border: 1px solid #323f54;
 
   border-radius: 13px;
 
-  background: #fbfcfe;
+  background: #131722;
 
   transition: 0.2s;
 }
 
 
 .typing-box:focus-within {
-  border-color: #72afe0;
+  border-color: #60a5fa;
 
-  background: white;
+  background: #131722;
 
   box-shadow:
-    0 0 0 3px rgba(74, 144, 214, 0.08);
+    0 0 0 3px rgba(96, 165, 250, 0.2);
 }
 
 
@@ -2471,7 +2472,7 @@ button {
 
   background: transparent;
 
-  color: #405469;
+  color: #e2e8f0;
 
   font-size: 13px;
 
@@ -2482,7 +2483,7 @@ button {
 
 
 .typing-box textarea::placeholder {
-  color: #a1adb9;
+  color: #718096;
 }
 
 
@@ -2496,9 +2497,9 @@ button {
 
   border-radius: 10px;
 
-  background: #1976d2;
+  background: #4080e0;
 
-  color: white;
+  color: #ffffff;
 
   font-size: 17px;
 
@@ -2509,14 +2510,14 @@ button {
 
 
 .send-button:hover:not(:disabled) {
-  background: #1565c0;
+  background: #5090f0;
 
   transform: translateY(-1px);
 }
 
 
 .send-button:disabled {
-  background: #dbe5ed;
+  background: #323f54;
 
   cursor: not-allowed;
 }
@@ -2525,7 +2526,7 @@ button {
 .typing-hint {
   margin: 7px 2px 0;
 
-  color: #a0abb6;
+  color: #718096;
 
   font-size: 9px;
 }
@@ -2544,9 +2545,9 @@ button {
 
   padding: 13px 15px;
 
-  background: #f7fbff;
+  background: #171f2c;
 
-  border: 1px solid #e0edf7;
+  border: 1px solid #2d3d54;
 
   border-radius: 10px;
 }
@@ -2558,7 +2559,7 @@ button {
 
 
 .ai-disclaimer strong {
-  color: #496a83;
+  color: #cbd5e1;
 
   font-size: 11px;
 }
@@ -2567,7 +2568,7 @@ button {
 .ai-disclaimer p {
   margin: 4px 0 0;
 
-  color: #8295a5;
+  color: #a0aec0;
 
   font-size: 10px;
 
@@ -2643,9 +2644,9 @@ button {
 
   border-radius: 10px;
 
-  background: #eef5fa;
+  background: #232d3f;
 
-  color: #4f7895;
+  color: #60a5fa;
 
   font-size: 17px;
 
@@ -2656,16 +2657,16 @@ button {
 
 
 .mic-button:hover {
-  background: #dcecf7;
+  background: #28374d;
 
   transform: translateY(-1px);
 }
 
 
 .mic-button.listening {
-  background: #ffe9e9;
+  background: #442426;
 
-  color: #d95353;
+  color: #f87171;
 
   animation: microphonePulse 1.2s infinite;
 }
@@ -2674,15 +2675,15 @@ button {
 @keyframes microphonePulse {
 
   0% {
-    box-shadow: 0 0 0 0 rgba(217, 83, 83, 0.25);
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.2);
   }
 
   70% {
-    box-shadow: 0 0 0 10px rgba(217, 83, 83, 0);
+    box-shadow: 0 0 0 10px rgba(248, 113, 113, 0);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(217, 83, 83, 0);
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
   }
 
 }
@@ -2696,11 +2697,11 @@ button {
 
   flex-shrink: 0;
 
-  border: 1px solid #dce7ef;
+  border: 1px solid #323f54;
 
   border-radius: 8px;
 
-  background: white;
+  background: #232d3f;
 
   cursor: pointer;
 
@@ -2718,7 +2719,7 @@ button {
 
 
 .speak-message-button:hover {
-  background: #edf6fd;
+  background: #28374d;
 
   transform: scale(1.05);
 }
@@ -2741,9 +2742,9 @@ button {
 
   border-radius: 8px;
 
-  background: #eef8ff;
+  background: #232d3f;
 
-  color: #477693;
+  color: #60a5fa;
 
   font-size: 10px;
 }
@@ -2756,9 +2757,9 @@ button {
 
   padding: 5px 9px;
 
-  background: white;
+  background: #28374d;
 
-  color: #4b7088;
+  color: #60a5fa;
 
   font-size: 9px;
 
@@ -2767,7 +2768,7 @@ button {
 
 
 .speaking-indicator button:hover {
-  background: #e3f1fa;
+  background: #2c3e55;
 }
 
 
@@ -2794,20 +2795,20 @@ button {
   margin-bottom: 24px;
   padding: 16px 18px;
   border-radius: 12px;
-  background: #eef7ff;
-  border: 1px solid #c9e4ff;
+  background: #232d3f;
+  border: 1px solid #2d3d54;
 }
 
 .assistant-fill-banner strong {
   display: block;
   font-size: 15px;
-  color: #1769aa;
+  color: #60a5fa;
   margin-bottom: 5px;
 }
 
 .assistant-fill-banner p {
   margin: 0;
-  color: #496273;
+  color: #a0aec0;
   font-size: 14px;
   line-height: 1.5;
 }

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 function AIAssistant() {
-
   const navigate = useNavigate();
 
   const [conversations, setConversations] = useState([]);
@@ -1105,9 +1104,6 @@ setIsGeneratingResponse(true);
                   setConversationId(conversation.id);
                 }}
               >
-                <span className="conversation-icon">
-                  💬
-                </span>
               
                 <span className="conversation-title">
                   {conversation.title || "CancerCare Assistant"}
