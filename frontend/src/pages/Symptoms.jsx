@@ -171,7 +171,7 @@ function Symptoms() {
           </p>
 
           <h1>
-            Symptom Diary 🩺
+            Symptom Diary 
           </h1>
 
           <p className="subtitle">
@@ -229,9 +229,6 @@ function Symptoms() {
 
           </div>
 
-          <span className="card-icon">
-            🩺
-          </span>
 
         </div>
 
@@ -360,10 +357,6 @@ function Symptoms() {
             </p>
 
           </div>
-
-          <span className="card-icon">
-            📋
-          </span>
 
         </div>
 

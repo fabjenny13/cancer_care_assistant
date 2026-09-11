@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../api.js";
 
 function Login({ onLogin }) {
 
@@ -8,22 +9,40 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
 
     event.preventDefault();
+
+    setIsLoggingIn(true);
 
     if (!email || !password) {
       alert("Please enter your email and password.");
       return;
     }
 
-    // Demo login
-    localStorage.setItem("cancercare_logged_in", "true");
 
-    onLogin();
-
-    navigate("/dashboard");
+    try {
+      const data = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+    
+      localStorage.setItem("access_token", data.access_token);
+    
+      // Continue to your existing post-login navigation
+      navigate("/dashboard");
+    
+      onLogin();
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoggingIn(false);
+    }
   }
 
   return (
@@ -204,14 +223,19 @@ function Login({ onLogin }) {
             </label>
 
 
-            <button
-              type="submit"
-              className="login-button"
-            >
-              Sign In
-              <span>→</span>
-            </button>
-
+              <button
+                type="submit"
+                disabled={isLoggingIn}
+                className="login-button"
+              >
+                {isLoggingIn ? (
+                  <>
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
+              </button>
           </form>
 
 

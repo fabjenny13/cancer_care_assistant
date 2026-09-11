@@ -13,7 +13,7 @@ function Dashboard() {
             Home / Dashboard
           </p>
 
-          <h1>Good evening! 👋</h1>
+          <h1>Good evening!</h1>
 
           <p className="subtitle">
             Here's an overview of your health and wellness.
@@ -22,7 +22,7 @@ function Dashboard() {
         </div>
 
         <div className="header-date">
-          📅 September 8, 2026
+           September 8, 2026
         </div>
 
       </div>
@@ -40,7 +40,7 @@ function Dashboard() {
 
           <h2>
             You're doing great by staying connected
-            with your health. 💙
+            with your health. 
           </h2>
 
           <p>
@@ -174,10 +174,6 @@ function Dashboard() {
 
             </div>
 
-            <span className="card-icon">
-              📅
-            </span>
-
           </div>
 
           <div className="empty-state small">
@@ -208,10 +204,6 @@ function Dashboard() {
               <p>Stay on top of your medication schedule</p>
 
             </div>
-
-            <span className="card-icon">
-              💊
-            </span>
 
           </div>
 
@@ -247,10 +239,6 @@ function Dashboard() {
             </p>
 
           </div>
-
-          <span className="card-icon">
-            🌱
-          </span>
 
         </div>
 

@@ -1,24 +1,30 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function AIAssistant() {
-
   const navigate = useNavigate();
 
+  const [conversations, setConversations] = useState([]);
   const [message, setMessage] = useState("");
+  const [conversationId, setConversationId] = useState(null);
+  const [loadingMessages, setLoadingMessages] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "ai",
-      text: "Hello 💙 I'm your CancerCare AI Assistant. I'm here to listen, help you organize your health information, and guide you toward appropriate support."
-    },
-    {
-      id: 2,
-      sender: "ai",
-      text: "You can type your thoughts or use the microphone 🎤 if you'd rather speak."
-    }
-  ]);
+
+  // const [messages, setMessages] = useState([
+  //   {
+  //     id: 1,
+  //     sender: "ai",
+  //     text: "Hello 💙 I'm your CancerCare AI Assistant. I'm here to listen, help you organize your health information, and guide you toward appropriate support."
+  //   },
+  //   {
+  //     id: 2,
+  //     sender: "ai",
+  //     text: "You can type your thoughts or use the microphone 🎤 if you'd rather speak."
+  //   }
+  // ]);
 
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -33,6 +39,145 @@ function AIAssistant() {
     "I want to prepare for my appointment",
     "I need help organizing my medicines"
   ];
+
+// =====================================================
+// LOAD CONVERSATIONS
+// =====================================================
+
+useEffect(() => {
+  async function loadConversations() {
+    const token = localStorage.getItem("access_token");
+
+    try {
+      const response = await fetch(
+        "http://localhost:8000/conversations",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load conversations");
+      }
+
+      const data = await response.json();
+
+      setConversations(data);
+
+      // Load the most recent conversation initially
+      if (data.length > 0) {
+        setConversationId(data[0].id);
+      } else {
+        // No conversations yet → create one
+        const createResponse = await fetch(
+          "http://localhost:8000/conversations",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              title: "CancerCare Assistant"
+            })
+          }
+        );
+
+        if (!createResponse.ok) {
+          throw new Error("Failed to create conversation");
+        }
+
+        const newConversation = await createResponse.json();
+
+        setConversations([newConversation]);
+        setConversationId(newConversation.id);
+      }
+    } catch (error) {
+      console.error(
+        "Failed to load conversations:",
+        error
+      );
+    }
+  }
+
+  loadConversations();
+}, []);
+
+
+
+// =====================================================
+// LOAD MESSAGES FOR SELECTED CONVERSATION
+// =====================================================
+
+useEffect(() => {
+  if (!conversationId) return;
+
+  let cancelled = false;
+
+  async function loadMessages() {
+    const token = localStorage.getItem("access_token");
+
+    setLoadingMessages(true);
+    setMessages([]);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/conversations/${conversationId}/messages`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load messages");
+      }
+
+      const savedMessages = await response.json();
+
+      // Ignore this response if user switched conversations
+      if (cancelled) return;
+
+      setMessages(
+        savedMessages.map((message) => ({
+          id: message.id,
+          sender:
+            message.sender === "ASSISTANT"
+              ? "ai"
+              : "user",
+          text: message.content
+        }))
+      );
+
+    } catch (error) {
+      // Ignore errors from cancelled requests
+      if (cancelled) return;
+
+      console.error(
+        "Failed to load messages:",
+        error
+      );
+
+      setMessages([]);
+
+    } finally {
+      if (!cancelled) {
+        setLoadingMessages(false);
+      }
+    }
+  }
+
+  loadMessages();
+
+  // Runs when conversationId changes
+  return () => {
+    cancelled = true;
+  };
+
+}, [conversationId]);
 
 
   // =====================================================
@@ -515,81 +660,156 @@ function AIAssistant() {
 
   }
 
-
+ 
   // =====================================================
   // SEND MESSAGE
   // =====================================================
 
-  function sendMessage(
-    textToSend = message
-  ) {
 
-    const cleanMessage =
-      textToSend.trim();
+   function generateConversationTitle(text) {
+  const cleanedText = text.trim();
 
-    if (!cleanMessage) {
-      return;
-    }
-
-
-    const userMessage = {
-
-      id: Date.now(),
-
-      sender: "user",
-
-      text: cleanMessage
-
-    };
-
-
-    setMessages(
-      (previousMessages) => [
-        ...previousMessages,
-        userMessage
-      ]
-    );
-
-
-    setMessage("");
-
-
-    const commandResponse =
-      handleCommand(cleanMessage);
-
-
-    setTimeout(() => {
-
-      const response =
-        commandResponse ||
-        getAIResponse(cleanMessage);
-
-
-      const aiMessage = {
-
-        id: Date.now() + 1,
-
-        sender: "ai",
-
-        text: response
-
-      };
-
-
-      setMessages(
-        (previousMessages) => [
-          ...previousMessages,
-          aiMessage
-        ]
-      );
-
-
-      speakResponse(response);
-
-    }, 500);
-
+  if (cleanedText.length <= 35) {
+    return cleanedText;
   }
 
+  return cleanedText.substring(0, 35).trim() + "...";
+}
+
+
+async function sendMessage(textToSend = message) {
+  const text = textToSend.trim();
+
+  if (!text || !conversationId) return;
+
+  const token = localStorage.getItem("access_token");
+  
+  const isFirstMessage = messages.length === 0;
+
+
+  setMessage("");
+
+
+  setMessages((prev) => [
+  ...prev,
+  {
+    id: Date.now(),
+    sender: "user",
+    text: text
+  }
+]);
+
+setIsGeneratingResponse(true);
+
+  try {
+    // 1. Save user message to backend
+    const userResponse = await fetch(
+      `http://localhost:8000/conversations/${conversationId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          content: text
+        })
+      }
+    );
+
+    if (!userResponse.ok) {
+      throw new Error("Failed to save user message");
+    }
+
+    const savedUserMessage = await userResponse.json();
+
+
+    if (isFirstMessage) {
+  const newTitle = generateConversationTitle(text);
+
+  try {
+    const titleResponse = await fetch(
+      `http://localhost:8000/conversations/${conversationId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: newTitle
+        })
+      }
+    );
+
+    if (titleResponse.ok) {
+      const updatedConversation =
+        await titleResponse.json();
+
+      setConversations((prev) =>
+        prev.map((conversation) =>
+          conversation.id === conversationId
+            ? {
+                ...conversation,
+                title: updatedConversation.title
+              }
+            : conversation
+        )
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Failed to update conversation title:",
+      error
+    );
+  }
+}
+
+    // 3. command handling
+    const commandResponse = handleCommand(text);
+
+    
+    // 4. Generate AI response
+    setTimeout(async () => {
+      const aiText = commandResponse || getAIResponse(text);
+
+      setIsGeneratingResponse(false);
+      // Display AI response
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          sender: "ai",
+          text: aiText
+        }
+      ]);
+
+      // 5. Save AI response to backend
+      try {
+        await fetch(
+          `http://localhost:8000/conversations/${conversationId}/messages/ai`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              content: aiText
+            })
+          }
+        );
+      } catch (error) {
+        console.error("Failed to save AI message:", error);
+      }
+
+      speakText(aiText);
+    }, 500);
+
+  } catch (error) {
+    console.error("Failed to send message:", error);
+  }
+}
 
   // =====================================================
   // VOICE INPUT
@@ -773,23 +993,9 @@ function AIAssistant() {
     <main className="main-content ai-page">
 
       <div className="top-header">
-
-        <div>
-
           <p className="breadcrumb">
             Home / AI Assistant
           </p>
-
-          <h1>
-            AI Assistant 🤖
-          </h1>
-
-          <p className="subtitle">
-            A supportive space to ask questions, share concerns,
-            and organize your health information.
-          </p>
-
-        </div>
 
       </div>
 
@@ -811,11 +1017,13 @@ function AIAssistant() {
           </div>
 
           <h2>
-            I'm here to listen. 💙
+            I'm here to listen. 💙 
+
           </h2>
 
           <p>
-            Type your thoughts or use the microphone
+            This is a supportive space to ask questions, share concerns,
+            and organize your health information. Type your thoughts or use the microphone
             if you'd rather speak.
           </p>
 
@@ -826,103 +1034,189 @@ function AIAssistant() {
 
       <section className="chat-card">
 
+        <div className="chat-layout">
+
+        {/* ================= CHAT HISTORY ================= */}
+
+        <aside className="chat-history">
+
+          <div className="history-header">
+            <h3>Chat History</h3>
+
+            <button
+              className="new-chat-button"
+              onClick={async () => {
+                const token = localStorage.getItem("access_token");
+              
+                try {
+                  const response = await fetch(
+                    "http://localhost:8000/conversations",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                      },
+                      body: JSON.stringify({
+                        title: "CancerCare Assistant"
+                      })
+                    }
+                  );
+                
+                  if (!response.ok) {
+                    throw new Error("Failed to create conversation");
+                  }
+                
+                  const newConversation = await response.json();
+                
+                  setConversations((prev) => [
+                    newConversation,
+                    ...prev
+                  ]);
+                
+                  setConversationId(newConversation.id);
+                
+                } catch (error) {
+                  console.error(
+                    "Failed to create conversation:",
+                    error
+                  );
+                }
+              }}
+            >
+              + New Chat
+            </button>
+          </div>
+            
+            
+          <div className="conversation-list">
+            
+            {conversations.map((conversation) => (
+            
+              <button
+                key={conversation.id}
+                className={
+                  conversation.id === conversationId
+                    ? "conversation-item active"
+                    : "conversation-item"
+                }
+                onClick={() => {
+                  setConversationId(conversation.id);
+                }}
+              >
+              
+                <span className="conversation-title">
+                  {conversation.title || "CancerCare Assistant"}
+                </span>
+              </button>
+
+            ))}
+
+    </div>
+
+  </aside>
+
+
+  {/* ================= ACTUAL CHAT ================= */}
+
+  <div className="chat-main">
+
         <div className="chat-header">
 
-          <div className="chat-title">
-
-            <div className="chat-avatar">
-              🤖
-            </div>
-
-            <div>
-
-              <h2>
-                CancerCare Assistant
-              </h2>
-
-              <span>
-                Voice & Text Support • Patient-friendly
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div className="online-status">
-
-            <span></span>
-
-            Online
-
-          </div>
-
+      <div className="chat-title">
+        <div className="chat-avatar">
+          🤖
         </div>
 
+        <div>
+          <h2>
+            CancerCare Assistant
+          </h2>
+
+          <span>
+            Voice & Text Support • Patient-friendly
+          </span>
+        </div>
+      </div>
+
+      <div className="online-status">
+        <span></span>
+        Online
+      </div>
+
+        </div>
 
         <div className="chat-messages">
 
-          {messages.map((item) => (
+  {loadingMessages ? (
+    <div className="messages-loader">
+      <div className="loader-spinner"></div>
+      <p>Loading conversation...</p>
+    </div>
+  ) : (
 
-            <div
-              key={item.id}
-              className={
-                item.sender === "user"
-                  ? "message-row user-message-row"
-                  : "message-row"
-              }
-            >
+    <>
+    {messages.map((item) => (
+      <div
+        key={item.id}
+        className={
+          item.sender === "user"
+            ? "message-row user-message-row"
+            : "message-row"
+        }
+      >
+        {item.sender === "ai" && (
+          <div className="message-avatar">
+            🤖
+          </div>
+        )}
 
-              {item.sender === "ai" && (
-
-                <div className="message-avatar">
-                  🤖
-                </div>
-
-              )}
-
-
-              <div
-                className={
-                  item.sender === "user"
-                    ? "message-bubble user-bubble"
-                    : "message-bubble ai-bubble"
-                }
-              >
-
-                {item.text}
-
-              </div>
-
-
-              {item.sender === "ai" && (
-
-                <button
-                  className="speak-message-button"
-                  onClick={() =>
-                    speakResponse(item.text)
-                  }
-                  title="Read response aloud"
-                >
-                  🔊
-                </button>
-
-              )}
-
-
-              {item.sender === "user" && (
-
-                <div className="message-avatar user-avatar-chat">
-                  P
-                </div>
-
-              )}
-
-            </div>
-
-          ))}
-
+        <div
+          className={
+            item.sender === "user"
+              ? "message-bubble user-bubble"
+              : "message-bubble ai-bubble"
+          }
+        >
+          {item.text}
         </div>
+
+        {item.sender === "ai" && (
+          <button
+            className="speak-message-button"
+            onClick={() => speakResponse(item.text)}
+            title="Read response aloud"
+          >
+            🔊
+          </button>
+        )}
+
+        {item.sender === "user" && (
+          <div className="message-avatar user-avatar-chat">
+            P
+          </div>
+        )}
+      </div>
+    ))}
+
+    {isGeneratingResponse && (
+  <div className="message-row">
+    <div className="message-avatar">
+      🤖
+    </div>
+
+    <div className="message-bubble ai-bubble typing-bubble">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+)}
+
+</>
+  )}
+
+</div>
 
 
         <div className="suggestions-section">
@@ -1058,6 +1352,10 @@ function AIAssistant() {
           </div>
 
         </div>
+
+      </div> {/* chat-main */}
+
+        </div> {/* chat-layout */}
 
       </section>
 

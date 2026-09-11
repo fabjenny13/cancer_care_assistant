@@ -231,7 +231,7 @@ function Appointments() {
           </p>
 
           <h1>
-            Appointments 📅
+            Appointments 
           </h1>
 
           <p className="subtitle">
@@ -288,10 +288,6 @@ function Appointments() {
             </p>
 
           </div>
-
-          <span className="card-icon">
-            📅
-          </span>
 
         </div>
 
@@ -479,10 +475,6 @@ function Appointments() {
             </p>
 
           </div>
-
-          <span className="card-icon">
-            📅
-          </span>
 
         </div>
 

@@ -235,7 +235,7 @@ function Mood() {
           </p>
 
           <h1>
-            Mood & Wellness 😊
+            Mood & Wellness 
           </h1>
 
           <p className="subtitle">
@@ -292,9 +292,6 @@ function Mood() {
 
           </div>
 
-          <span className="card-icon">
-            🌱
-          </span>
 
         </div>
 
@@ -362,9 +359,6 @@ function Mood() {
 
           </div>
 
-          <span className="card-icon">
-            📈
-          </span>
 
         </div>
 
