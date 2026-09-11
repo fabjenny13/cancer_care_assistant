@@ -3,10 +3,16 @@ body,
 #root {
   margin: 0;
   padding: 0;
-  min-height: 100%;
   width: 100%;
+  min-height: 100vh;
+  background: #0b1220 !important;
 }
 
 body {
   min-width: 320px;
+  background: #0b1220 !important;
+}
+
+#root {
+  background: #0b1220 !important;
 }
