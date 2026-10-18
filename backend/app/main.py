@@ -8,6 +8,9 @@ from app.routers.profile import router as profile_router
 from app.routers.conversation import router as conversation_router
 from app.routers.mood import router as mood_router
 from app.routers.safety import router as safety_router
+from app.routers.symptom import router as symptom_router
+from app.routers.medication import router as medication_router
+from app.routers.appointment import router as appointment_router
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -32,6 +35,9 @@ app.include_router(profile_router)
 app.include_router(conversation_router)
 app.include_router(mood_router)
 app.include_router(safety_router)
+app.include_router(symptom_router)
+app.include_router(medication_router)
+app.include_router(appointment_router)
 
 @app.get("/")
 def root():

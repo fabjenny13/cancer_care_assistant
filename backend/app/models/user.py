@@ -67,3 +67,18 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+
+    symptom_logs: Mapped[list["SymptomLog"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    medications: Mapped[list["Medication"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    appointments: Mapped[list["Appointment"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )

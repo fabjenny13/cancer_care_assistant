@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+import uuid
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_current_user
@@ -44,45 +46,57 @@ def create_mood_log(
         message_id=message.id if message else None,
         emotion=data.emotion,
         confidence=data.confidence,
-        distress_score=data.distress_score
+        distress_score=data.distress_score,
+        mood_score=data.mood_score,
+        note=data.note,
+        source=data.source
     )
 
     db.add(mood)
     db.commit()
     db.refresh(mood)
 
-    return MoodResponse(
-        id=str(mood.id),
-        user_id=str(mood.user_id),
-        message_id=str(mood.message_id) if mood.message_id else None,
-        emotion=mood.emotion,
-        confidence=mood.confidence,
-        distress_score=mood.distress_score,
-        created_at=mood.created_at
-    )
+    return mood
 
 
 @router.get("", response_model=list[MoodResponse])
 def get_mood_logs(
+    source: str | None = Query(default=None, pattern="^(MANUAL|AI)$"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    moods = (
+    query = db.query(MoodLog).filter(MoodLog.user_id == current_user.id)
+
+    if source:
+        query = query.filter(MoodLog.source == source)
+
+    return query.order_by(MoodLog.created_at.asc()).all()
+
+
+@router.delete("/{mood_id}")
+def delete_mood_log(
+    mood_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    mood = (
         db.query(MoodLog)
-        .filter(MoodLog.user_id == current_user.id)
-        .order_by(MoodLog.created_at.asc())
-        .all()
+        .filter(
+            MoodLog.id == mood_id,
+            MoodLog.user_id == current_user.id
+        )
+        .first()
     )
 
-    return [
-        MoodResponse(
-            id=str(mood.id),
-            user_id=str(mood.user_id),
-            message_id=str(mood.message_id) if mood.message_id else None,
-            emotion=mood.emotion,
-            confidence=mood.confidence,
-            distress_score=mood.distress_score,
-            created_at=mood.created_at
+    if not mood:
+        raise HTTPException(
+            status_code=404,
+            detail="Mood entry not found"
         )
-        for mood in moods
-    ]
+
+    db.delete(mood)
+    db.commit()
+
+    # JSON body (not 204): the frontend's apiRequest() always calls
+    # response.json(), which would throw on an empty response.
+    return {"message": "Mood entry deleted"}

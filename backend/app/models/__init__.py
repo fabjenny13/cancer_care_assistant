@@ -4,3 +4,6 @@ from app.models.conversation import Conversation
 from app.models.message import Message
 from app.models.mood import MoodLog
 from app.models.safety import SafetyEvent
+from app.models.symptom import SymptomLog
+from app.models.medication import Medication
+from app.models.appointment import Appointment
