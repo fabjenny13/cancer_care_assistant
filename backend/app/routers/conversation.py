@@ -8,6 +8,7 @@ from app.db.database import get_db
 from app.models.conversation import Conversation
 from app.models.user import User
 from app.models.safety import SafetyEvent, SafetySeverity
+from app.core.diary_context import build_diary_context
 from app.schemas.conversation import (
     ConversationCreate,
     ConversationResponse,
@@ -299,11 +300,18 @@ def chat_with_ai(
     db.commit()
     db.refresh(user_msg)
 
+    # summary of the user's recent diary entries for the AI
+    user_context = build_diary_context(db, current_user.id)
+
     # call the AI core
     try:
         resp = requests.post(
             f"{AI_CORE_URL}/chat",
-            json={"message": data.content, "history": history},
+            json={
+                "message": data.content,
+                "history": history,
+                "user_context": user_context,
+            },
             timeout=120,
         )
         resp.raise_for_status()
