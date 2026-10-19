@@ -18,3 +18,15 @@ def call_ollama(messages: list[dict], model: str = MODEL) -> str:
     response.raise_for_status()
     data = response.json()
     return data["message"]["content"]
+
+EMBED_URL = "http://localhost:11434/api/embeddings"
+EMBED_MODEL = "nomic-embed-text"
+
+
+def get_embedding(text: str, model: str = EMBED_MODEL) -> list[float]:
+    """Turn a piece of text into a vector of numbers representing its meaning."""
+    payload = {"model": model, "prompt": text}
+    response = requests.post(EMBED_URL, json=payload, timeout=60)
+    response.raise_for_status()
+    data = response.json()
+    return data["embedding"]
