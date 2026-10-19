@@ -1,5 +1,22 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { apiRequest } from "../api";
+import { useApiList } from "../utils/useApiList";
+import { toHHMM } from "../utils/dates";
+
+// The API names these `appointment_date`, `appointment_time` and
+// `appointment_type`; this page works with `date`, `time` and `type`.
+function fromApi(appointment) {
+  return {
+    id: appointment.id,
+    doctor: appointment.doctor,
+    hospital: appointment.hospital ?? "",
+    date: appointment.appointment_date,
+    time: toHHMM(appointment.appointment_time),
+    type: appointment.appointment_type,
+    notes: appointment.notes ?? ""
+  };
+}
 
 function Appointments() {
 
@@ -23,49 +40,22 @@ function Appointments() {
   // LOAD SAVED APPOINTMENTS
   // -----------------------------------------
 
-  const [appointments, setAppointments] = useState(() => {
+  const {
+    items: appointments,
+    setItems: setAppointments,
+    loading,
+    loadError,
+    reload: loadAppointments
+  } = useApiList(
+    "/appointments",
+    fromApi
+  );
 
-    try {
-
-      const savedAppointments =
-        localStorage.getItem(
-          "cancercare_appointments"
-        );
-
-      return savedAppointments
-        ? JSON.parse(savedAppointments)
-        : [];
-
-    } catch (error) {
-
-      console.error(
-        "Could not load appointments:",
-        error
-      );
-
-      return [];
-
-    }
-
-  });
+  const [saving, setSaving] = useState(false);
 
 
   const [assistantFilled, setAssistantFilled] =
     useState(false);
-
-
-  // -----------------------------------------
-  // SAVE APPOINTMENTS PERMANENTLY
-  // -----------------------------------------
-
-  useEffect(() => {
-
-    localStorage.setItem(
-      "cancercare_appointments",
-      JSON.stringify(appointments)
-    );
-
-  }, [appointments]);
 
 
   // -----------------------------------------
@@ -128,7 +118,7 @@ function Appointments() {
   // ADD APPOINTMENT
   // -----------------------------------------
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
 
     event.preventDefault();
 
@@ -149,31 +139,35 @@ function Appointments() {
     }
 
 
-    const newAppointment = {
+    setSaving(true);
 
-      id: Date.now(),
+    try {
 
-      doctor,
+      await apiRequest("/appointments", {
+        method: "POST",
+        body: JSON.stringify({
+          doctor,
+          hospital: hospital || null,
+          appointment_date: date,
+          appointment_time: time,
+          appointment_type: type,
+          notes: notes || null
+        })
+      });
 
-      hospital,
+      await loadAppointments();
 
-      date,
+    } catch (error) {
 
-      time,
+      alert(error.message);
 
-      type,
+      return;
 
-      notes
+    } finally {
 
-    };
+      setSaving(false);
 
-
-    setAppointments(
-      (previousAppointments) => [
-        ...previousAppointments,
-        newAppointment
-      ]
-    );
+    }
 
 
     // Clear form
@@ -199,15 +193,24 @@ function Appointments() {
   // DELETE APPOINTMENT
   // -----------------------------------------
 
-  function deleteAppointment(id) {
+  async function deleteAppointment(id) {
 
-    setAppointments(
-      (previousAppointments) =>
-        previousAppointments.filter(
-          (appointment) =>
-            appointment.id !== id
-        )
-    );
+    try {
+
+      await apiRequest(`/appointments/${id}`, { method: "DELETE" });
+
+      setAppointments(
+        (previousAppointments) =>
+          previousAppointments.filter(
+            (appointment) => appointment.id !== id
+          )
+      );
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
 
   }
 
@@ -447,8 +450,8 @@ function Appointments() {
           <button
             type="submit"
             className="primary-button"
+            disabled={saving}
           >
-
             Add Appointment
 
           </button>
@@ -479,7 +482,20 @@ function Appointments() {
         </div>
 
 
-        {appointments.length === 0 ? (
+        {loading ? (
+
+          <div className="empty-state">
+            <h3>Loading...</h3>
+          </div>
+
+        ) : loadError ? (
+
+          <div className="empty-state">
+            <h3>Could not load your appointments</h3>
+            <p>{loadError}</p>
+          </div>
+
+        ) : appointments.length === 0 ? (
 
           <div className="empty-state">
 
