@@ -7,10 +7,11 @@ from app.core.dependencies import get_current_user
 from app.db.database import get_db
 from app.models.conversation import Conversation
 from app.models.user import User
+from app.models.safety import SafetyEvent, SafetySeverity
 from app.schemas.conversation import (
     ConversationCreate,
     ConversationResponse,
-    ConversationUpdate
+    ConversationUpdate,
     ChatReplyResponse
 )
 
@@ -320,6 +321,14 @@ def chat_with_ai(
         content=result["reply"]
     )
     db.add(ai_msg)
+    if result["flagged"]:
+        db.add(SafetyEvent(
+            user_id=current_user.id,
+            message_id=user_msg.id,
+            event_type="CRISIS_LANGUAGE",
+            severity=SafetySeverity.HIGH,
+            description="Crisis language detected by the AI safety guardrail",
+        ))
     conversation.updated_at = func.now()
     db.commit()
     db.refresh(ai_msg)
