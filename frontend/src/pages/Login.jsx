@@ -68,10 +68,6 @@ function Login({ onLogin }) {
 
         <div className="login-message">
 
-          <span className="login-small-title">
-            YOUR HEALTH. YOUR JOURNEY.
-          </span>
-
           <h1>
             Compassionate support,
             <br />
@@ -257,19 +253,6 @@ function Login({ onLogin }) {
             >
               Create an account
             </button>
-
-          </div>
-
-
-          <div className="login-security">
-
-            <span>🔒</span>
-
-            <p>
-              Your health information is handled with care.
-              This demo login will be replaced with secure
-              backend authentication.
-            </p>
 
           </div>
 

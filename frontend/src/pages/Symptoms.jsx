@@ -1,5 +1,18 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { apiRequest } from "../api";
+import { useApiList } from "../utils/useApiList";
+
+// The API stores the day as `logged_on`; this page works with `date`.
+function fromApi(symptom) {
+  return {
+    id: symptom.id,
+    symptom: symptom.symptom,
+    severity: symptom.severity,
+    date: symptom.logged_on,
+    notes: symptom.notes ?? ""
+  };
+}
 
 function Symptoms() {
 
@@ -11,43 +24,21 @@ function Symptoms() {
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
 
-  const [symptoms, setSymptoms] = useState(() => {
+  const {
+    items: symptoms,
+    setItems: setSymptoms,
+    loading,
+    loadError,
+    reload: loadSymptoms
+  } = useApiList(
+    "/symptoms",
+    fromApi
+  );
 
-    try {
-      const savedSymptoms =
-        localStorage.getItem("cancercare_symptoms");
-
-      return savedSymptoms
-        ? JSON.parse(savedSymptoms)
-        : [];
-
-    } catch (error) {
-
-      console.error(
-        "Could not load symptoms:",
-        error
-      );
-
-      return [];
-    }
-  });
+  const [saving, setSaving] = useState(false);
 
   const [assistantFilled, setAssistantFilled] =
     useState(false);
-
-
-  // -----------------------------------------
-  // SAVE SYMPTOMS PERMANENTLY
-  // -----------------------------------------
-
-  useEffect(() => {
-
-    localStorage.setItem(
-      "cancercare_symptoms",
-      JSON.stringify(symptoms)
-    );
-
-  }, [symptoms]);
 
 
   // -----------------------------------------
@@ -97,7 +88,7 @@ function Symptoms() {
   // SAVE SYMPTOM
   // -----------------------------------------
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
 
     event.preventDefault();
 
@@ -110,26 +101,33 @@ function Symptoms() {
       return;
     }
 
-    const newSymptom = {
+    setSaving(true);
 
-      id: Date.now(),
+    try {
 
-      symptom,
+      await apiRequest("/symptoms", {
+        method: "POST",
+        body: JSON.stringify({
+          symptom,
+          severity,
+          logged_on: date,
+          notes: notes || null
+        })
+      });
 
-      severity,
+      await loadSymptoms();
 
-      date,
+    } catch (error) {
 
-      notes
+      alert(error.message);
 
-    };
+      return;
 
-    setSymptoms(
-      (previousSymptoms) => [
-        ...previousSymptoms,
-        newSymptom
-      ]
-    );
+    } finally {
+
+      setSaving(false);
+
+    }
 
     setSymptom("");
     setSeverity("");
@@ -146,14 +144,24 @@ function Symptoms() {
   // DELETE SYMPTOM
   // -----------------------------------------
 
-  function deleteSymptom(id) {
+  async function deleteSymptom(id) {
 
-    setSymptoms(
-      (previousSymptoms) =>
-        previousSymptoms.filter(
-          (item) => item.id !== id
-        )
-    );
+    try {
+
+      await apiRequest(`/symptoms/${id}`, { method: "DELETE" });
+
+      setSymptoms(
+        (previousSymptoms) =>
+          previousSymptoms.filter(
+            (item) => item.id !== id
+          )
+      );
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
 
   }
 
@@ -331,6 +339,7 @@ function Symptoms() {
           <button
             type="submit"
             className="primary-button"
+            disabled={saving}
           >
             Save Symptom
           </button>
@@ -361,7 +370,20 @@ function Symptoms() {
         </div>
 
 
-        {symptoms.length === 0 ? (
+        {loading ? (
+
+          <div className="empty-state">
+            <h3>Loading...</h3>
+          </div>
+
+        ) : loadError ? (
+
+          <div className="empty-state">
+            <h3>Could not load your symptoms</h3>
+            <p>{loadError}</p>
+          </div>
+
+        ) : symptoms.length === 0 ? (
 
           <div className="empty-state">
 
