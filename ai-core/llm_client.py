@@ -1,7 +1,7 @@
 import requests
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL = "phi3"  # change to whatever you pulled: mistral, phi3, gemma2, etc.
+MODEL = "llama3.2" # change to whatever you pulled: mistral, phi3, gemma2, etc.
 
 
 def call_ollama(messages: list[dict], model: str = MODEL) -> str:

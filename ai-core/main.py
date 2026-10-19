@@ -1,4 +1,4 @@
-from typing import List, Optional
+﻿from typing import List, Optional
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -16,6 +16,7 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     history: Optional[List[ChatMessage]] = []
+    user_context: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
@@ -26,7 +27,7 @@ class ChatResponse(BaseModel):
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
     history = [{"role": m.role, "content": m.content} for m in req.history]
-    result = generate_response(req.message, history)
+    result = generate_response(req.message, history, req.user_context)
     return ChatResponse(**result)
 
 
