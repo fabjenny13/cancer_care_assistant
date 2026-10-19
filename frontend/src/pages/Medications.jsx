@@ -1,5 +1,21 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { apiRequest } from "../api";
+import { useApiList } from "../utils/useApiList";
+import { isToday, toHHMM } from "../utils/dates";
+
+// The API stores `time_of_day` and `last_taken_at`; this page works with
+// `time` and a simple `taken` flag ("taken today", in the user's timezone).
+function fromApi(medication) {
+  return {
+    id: medication.id,
+    name: medication.name,
+    dosage: medication.dosage,
+    frequency: medication.frequency,
+    time: toHHMM(medication.time_of_day),
+    taken: isToday(medication.last_taken_at)
+  };
+}
 
 function Medications() {
 
@@ -11,48 +27,21 @@ function Medications() {
   const [frequency, setFrequency] = useState("");
   const [time, setTime] = useState("");
 
-  const [medications, setMedications] = useState(() => {
+  const {
+    items: medications,
+    setItems: setMedications,
+    loading,
+    loadError,
+    reload: loadMedications
+  } = useApiList(
+    "/medications",
+    fromApi
+  );
 
-    try {
-
-      const savedMedications =
-        localStorage.getItem(
-          "cancercare_medications"
-        );
-
-      return savedMedications
-        ? JSON.parse(savedMedications)
-        : [];
-
-    } catch (error) {
-
-      console.error(
-        "Could not load medications:",
-        error
-      );
-
-      return [];
-
-    }
-
-  });
+  const [saving, setSaving] = useState(false);
 
   const [assistantFilled, setAssistantFilled] =
     useState(false);
-
-
-  // -----------------------------------------
-  // SAVE PERMANENTLY
-  // -----------------------------------------
-
-  useEffect(() => {
-
-    localStorage.setItem(
-      "cancercare_medications",
-      JSON.stringify(medications)
-    );
-
-  }, [medications]);
 
 
   // -----------------------------------------
@@ -102,7 +91,7 @@ function Medications() {
   // ADD MEDICATION
   // -----------------------------------------
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
 
     event.preventDefault();
 
@@ -120,28 +109,33 @@ function Medications() {
       return;
     }
 
-    const newMedication = {
+    setSaving(true);
 
-      id: Date.now(),
+    try {
 
-      name,
+      await apiRequest("/medications", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          dosage,
+          frequency,
+          time_of_day: time
+        })
+      });
 
-      dosage,
+      await loadMedications();
 
-      frequency,
+    } catch (error) {
 
-      time,
+      alert(error.message);
 
-      taken: false
+      return;
 
-    };
+    } finally {
 
-    setMedications(
-      (previousMedications) => [
-        ...previousMedications,
-        newMedication
-      ]
-    );
+      setSaving(false);
+
+    }
 
     setName("");
     setDosage("");
@@ -161,20 +155,41 @@ function Medications() {
   // MARK AS TAKEN
   // -----------------------------------------
 
-  function toggleTaken(id) {
+  async function toggleTaken(id) {
 
-    setMedications(
-      (previousMedications) =>
-        previousMedications.map(
-          (medicine) =>
-            medicine.id === id
-              ? {
-                  ...medicine,
-                  taken: !medicine.taken
-                }
-              : medicine
-        )
+    const medicine = medications.find(
+      (item) => item.id === id
     );
+
+    if (!medicine) {
+      return;
+    }
+
+    try {
+
+      const updated = await apiRequest(
+        `/medications/${id}/taken`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ taken: !medicine.taken })
+        }
+      );
+
+      setMedications(
+        (previousMedications) =>
+          previousMedications.map(
+            (item) =>
+              item.id === id
+                ? fromApi(updated)
+                : item
+          )
+      );
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
 
   }
 
@@ -183,15 +198,24 @@ function Medications() {
   // DELETE
   // -----------------------------------------
 
-  function deleteMedication(id) {
+  async function deleteMedication(id) {
 
-    setMedications(
-      (previousMedications) =>
-        previousMedications.filter(
-          (medicine) =>
-            medicine.id !== id
-        )
-    );
+    try {
+
+      await apiRequest(`/medications/${id}`, { method: "DELETE" });
+
+      setMedications(
+        (previousMedications) =>
+          previousMedications.filter(
+            (medicine) => medicine.id !== id
+          )
+      );
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
 
   }
 
@@ -378,6 +402,7 @@ function Medications() {
           <button
             type="submit"
             className="primary-button"
+            disabled={saving}
           >
             Add Medication
           </button>
@@ -409,7 +434,20 @@ function Medications() {
         </div>
 
 
-        {medications.length === 0 ? (
+        {loading ? (
+
+          <div className="empty-state">
+            <h3>Loading...</h3>
+          </div>
+
+        ) : loadError ? (
+
+          <div className="empty-state">
+            <h3>Could not load your medications</h3>
+            <p>{loadError}</p>
+          </div>
+
+        ) : medications.length === 0 ? (
 
           <div className="empty-state">
 

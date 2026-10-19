@@ -1,5 +1,18 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { apiRequest } from "../api";
+import { useApiList } from "../utils/useApiList";
+import { toLocalDateString } from "../utils/dates";
+
+// The API stores `emotion` and a timestamp; this page works with `mood`
+// and a calendar date in the user's own timezone.
+function fromApi(entry) {
+  return {
+    id: entry.id,
+    mood: entry.emotion,
+    date: toLocalDateString(entry.created_at)
+  };
+}
 
 function Mood() {
 
@@ -9,32 +22,18 @@ function Mood() {
   const [selectedMood, setSelectedMood] =
     useState("");
 
-  const [moodHistory, setMoodHistory] =
-    useState(() => {
+  const {
+    items: moodHistory,
+    setItems: setMoodHistory,
+    loading,
+    loadError,
+    reload: loadMoods
+  } = useApiList(
+    "/mood?source=MANUAL",
+    fromApi
+  );
 
-      try {
-
-        const savedMoods =
-          localStorage.getItem(
-            "cancercare_moods"
-          );
-
-        return savedMoods
-          ? JSON.parse(savedMoods)
-          : [];
-
-      } catch (error) {
-
-        console.error(
-          "Could not load mood history:",
-          error
-        );
-
-        return [];
-
-      }
-
-    });
+  const [saving, setSaving] = useState(false);
 
 
   const [assistantFilled, setAssistantFilled] =
@@ -69,20 +68,6 @@ function Mood() {
     }
 
   ];
-
-
-  // -----------------------------------------
-  // SAVE MOODS PERMANENTLY
-  // -----------------------------------------
-
-  useEffect(() => {
-
-    localStorage.setItem(
-      "cancercare_moods",
-      JSON.stringify(moodHistory)
-    );
-
-  }, [moodHistory]);
 
 
   // -----------------------------------------
@@ -132,36 +117,10 @@ function Mood() {
 
 
   // -----------------------------------------
-  // GET TODAY
-  // -----------------------------------------
-
-  function getToday() {
-
-    const date = new Date();
-
-    const year =
-      date.getFullYear();
-
-    const month =
-      String(
-        date.getMonth() + 1
-      ).padStart(2, "0");
-
-    const day =
-      String(
-        date.getDate()
-      ).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-
-  }
-
-
-  // -----------------------------------------
   // SAVE MOOD
   // -----------------------------------------
 
-  function saveMood() {
+  async function saveMood() {
 
     if (!selectedMood) {
 
@@ -174,23 +133,31 @@ function Mood() {
     }
 
 
-    const newMood = {
+    setSaving(true);
 
-      id: Date.now(),
+    try {
 
-      mood: selectedMood,
+      await apiRequest("/mood", {
+        method: "POST",
+        body: JSON.stringify({
+          emotion: selectedMood,
+          source: "MANUAL"
+        })
+      });
 
-      date: getToday()
+      await loadMoods();
 
-    };
+    } catch (error) {
 
+      alert(error.message);
 
-    setMoodHistory(
-      (previousMoods) => [
-        ...previousMoods,
-        newMood
-      ]
-    );
+      return;
+
+    } finally {
+
+      setSaving(false);
+
+    }
 
 
     setSelectedMood("");
@@ -209,15 +176,24 @@ function Mood() {
   // DELETE MOOD
   // -----------------------------------------
 
-  function deleteMood(id) {
+  async function deleteMood(id) {
 
-    setMoodHistory(
-      (previousMoods) =>
-        previousMoods.filter(
-          (item) =>
-            item.id !== id
-        )
-    );
+    try {
+
+      await apiRequest(`/mood/${id}`, { method: "DELETE" });
+
+      setMoodHistory(
+        (previousMoods) =>
+          previousMoods.filter(
+            (item) => item.id !== id
+          )
+      );
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
 
   }
 
@@ -334,6 +310,7 @@ function Mood() {
           type="button"
           className="primary-button mood-save"
           onClick={saveMood}
+          disabled={saving}
         >
           Save Today's Mood
         </button>
@@ -363,7 +340,20 @@ function Mood() {
         </div>
 
 
-        {moodHistory.length === 0 ? (
+        {loading ? (
+
+          <div className="empty-state">
+            <h3>Loading...</h3>
+          </div>
+
+        ) : loadError ? (
+
+          <div className="empty-state">
+            <h3>Could not load your mood history</h3>
+            <p>{loadError}</p>
+          </div>
+
+        ) : moodHistory.length === 0 ? (
 
           <div className="empty-state">
 
