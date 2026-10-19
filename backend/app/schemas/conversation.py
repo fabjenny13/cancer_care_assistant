@@ -1,3 +1,4 @@
+from app.schemas.message import MessageResponse
 from pydantic import BaseModel, Field
 from datetime import datetime
 
@@ -16,3 +17,8 @@ class ConversationResponse(BaseModel):
     title: str | None
     created_at: datetime
     updated_at: datetime
+
+class ChatReplyResponse(BaseModel):
+    user_message: MessageResponse
+    ai_message: MessageResponse
+    flagged: bool

@@ -3,8 +3,11 @@ import numpy as np
 import faiss
 from llm_client import get_embedding
 
-INDEX_FILE = "kb_index.faiss"
-METADATA_FILE = "kb_metadata.json"
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+INDEX_FILE = str(BASE_DIR / "kb_index.faiss")
+METADATA_FILE = str(BASE_DIR / "kb_metadata.json")
 
 _index = None
 _metadata = None

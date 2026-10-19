@@ -680,134 +680,140 @@ useEffect(() => {
 async function sendMessage(textToSend = message) {
   const text = textToSend.trim();
 
-  if (!text || !conversationId) return;
+  if (!text || !conversationId || isGeneratingResponse) return;
 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const token = localStorage.getItem("access_token");
-  
-  const isFirstMessage = messages.length === 0;
+  const authHeaders = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`
+  };
 
+  const isFirstMessage = messages.length === 0;
 
   setMessage("");
 
-
   setMessages((prev) => [
-  ...prev,
-  {
-    id: Date.now(),
-    sender: "user",
-    text: text
-  }
-]);
+    ...prev,
+    {
+      id: Date.now(),
+      sender: "user",
+      text: text
+    }
+  ]);
 
-setIsGeneratingResponse(true);
+  setIsGeneratingResponse(true);
 
   try {
-    // 1. Save user message to backend
-    const userResponse = await fetch(
-      `http://localhost:8000/conversations/${conversationId}/messages`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          content: text
-        })
-      }
-    );
-
-    if (!userResponse.ok) {
-      throw new Error("Failed to save user message");
-    }
-
-    const savedUserMessage = await userResponse.json();
-
-
-    if (isFirstMessage) {
-  const newTitle = generateConversationTitle(text);
-
-  try {
-    const titleResponse = await fetch(
-      `http://localhost:8000/conversations/${conversationId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          title: newTitle
-        })
-      }
-    );
-
-    if (titleResponse.ok) {
-      const updatedConversation =
-        await titleResponse.json();
-
-      setConversations((prev) =>
-        prev.map((conversation) =>
-          conversation.id === conversationId
-            ? {
-                ...conversation,
-                title: updatedConversation.title
-              }
-            : conversation
-        )
-      );
-    }
-  } catch (error) {
-    console.error(
-      "Failed to update conversation title:",
-      error
-    );
-  }
-}
-
-    // 3. command handling
+    // Navigation shortcuts ("open my appointments", ...) are handled
+    // locally. Everything else goes to the AI through /chat.
     const commandResponse = handleCommand(text);
 
-    
-    // 4. Generate AI response
-    setTimeout(async () => {
-      const aiText = commandResponse || getAIResponse(text);
+    let aiText;
+    let aiId = Date.now() + 1;
 
-      setIsGeneratingResponse(false);
-      // Display AI response
-      setMessages((prev) => [
-        ...prev,
+    if (commandResponse) {
+      const userResponse = await fetch(
+        `${API_URL}/conversations/${conversationId}/messages`,
         {
-          id: Date.now(),
-          sender: "ai",
-          text: aiText
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({ content: text })
         }
-      ]);
+      );
 
-      // 5. Save AI response to backend
+      if (!userResponse.ok) {
+        throw new Error("Failed to save user message");
+      }
+
+      aiText = commandResponse;
+
       try {
         await fetch(
-          `http://localhost:8000/conversations/${conversationId}/messages/ai`,
+          `${API_URL}/conversations/${conversationId}/messages/ai`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              content: aiText
-            })
+            headers: authHeaders,
+            body: JSON.stringify({ content: aiText })
           }
         );
       } catch (error) {
         console.error("Failed to save AI message:", error);
       }
+    } else {
+      // The backend saves both the user message and the AI reply,
+      // and returns flagged=true if the safety guardrail fired.
+      const chatResponse = await fetch(
+        `${API_URL}/conversations/${conversationId}/chat`,
+        {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({ content: text })
+        }
+      );
 
-      speakText(aiText);
-    }, 500);
+      if (!chatResponse.ok) {
+        throw new Error("AI request failed: " + chatResponse.status);
+      }
 
+      const chatData = await chatResponse.json();
+
+      aiText = chatData.ai_message.content;
+      aiId = chatData.ai_message.id;
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: aiId,
+        sender: "ai",
+        text: aiText
+      }
+    ]);
+
+    setIsGeneratingResponse(false);
+
+    if (isFirstMessage) {
+      try {
+        const titleResponse = await fetch(
+          `${API_URL}/conversations/${conversationId}`,
+          {
+            method: "PATCH",
+            headers: authHeaders,
+            body: JSON.stringify({
+              title: generateConversationTitle(text)
+            })
+          }
+        );
+
+        if (titleResponse.ok) {
+          const updatedConversation = await titleResponse.json();
+
+          setConversations((prev) =>
+            prev.map((conversation) =>
+              conversation.id === conversationId
+                ? { ...conversation, title: updatedConversation.title }
+                : conversation
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Failed to update conversation title:", error);
+      }
+    }
   } catch (error) {
     console.error("Failed to send message:", error);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now() + 2,
+        sender: "ai",
+        text: "Sorry, I couldn't reach the assistant right now. Please try again in a moment."
+      }
+    ]);
+  } finally {
+    setIsGeneratingResponse(false);
   }
 }
 

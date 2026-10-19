@@ -21,6 +21,7 @@ class ChatResult(TypedDict):
 def generate_response(
     message: str,
     history: Optional[List[dict]] = None,
+    user_context: Optional[str] = None,
 ) -> ChatResult:
     """Main entry point for the AI core. Call this from anywhere - the FastAPI
     endpoint below, or directly from another teammate's backend code.
@@ -43,7 +44,7 @@ def generate_response(
         return {"reply": CRISIS_RESPONSE, "flagged": True}
 
     # Retrieve grounding context from the knowledge base.
-    context = build_context(message)
+    context = "" if user_context else build_context(message)
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     if context:
@@ -56,9 +57,24 @@ def generate_response(
                 f"{context}"
             ),
         })
+
+
     for m in history:
         messages.append({"role": m["role"], "content": m["content"]})
-    messages.append({"role": "user", "content": message})
 
+
+    if user_context:
+        user_content = (
+            f"Here is my health diary from the past week:\n"
+            f"{user_context}\n\n"
+            f"Using ONLY the diary above, reply in 2-3 sentences. "
+            f"Mention at least two specific details from it (like my mood, "
+            f"symptoms or appointment). Be kind but honest. "
+            f"Do not diagnose or tell me to change medication.\n\n"
+            f"My question: {message}"
+        )
+    else:
+        user_content = message
+    messages.append({"role": "user", "content": user_content})
     reply = call_ollama(messages)
     return {"reply": reply, "flagged": False}
