@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../api.js";
+import { Link } from "react-router-dom";
 
 function Login({ onLogin }) {
 
@@ -169,15 +170,12 @@ function Login({ onLogin }) {
                   Password
                 </label>
 
-                <button
-                  type="button"
-                  className="forgot-button"
-                  onClick={() =>
-                    alert("Password recovery will be available after backend integration.")
-                  }
-                >
-                  Forgot password?
-                </button>
+                <Link
+  to="/forgot-password"
+  className="forgot-button"
+>
+  Forgot password?
+</Link>
 
               </div>
 
@@ -246,13 +244,7 @@ function Login({ onLogin }) {
               Don't have an account?
             </p>
 
-            <button
-              onClick={() =>
-                alert("Registration will be connected to the backend later.")
-              }
-            >
-              Create an account
-            </button>
+             <Link to="/register">Create an account</Link>
 
           </div>
 

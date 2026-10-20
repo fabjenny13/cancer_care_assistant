@@ -1,5 +1,7 @@
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 import AIAssistant from "./pages/AIAssistant";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   BrowserRouter,
@@ -22,13 +24,16 @@ import "./App.css";
 
 
 function ProtectedLayout({ onLogout }) {
+
   return (
     <div className="app-layout">
 
       <Sidebar onLogout={onLogout} />
 
       <div className="content-area">
+
         <Outlet />
+
       </div>
 
     </div>
@@ -38,62 +43,9 @@ function ProtectedLayout({ onLogout }) {
 
 function App() {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-
-
-  // Check authentication whenever the app loads
-  useEffect(() => {
-
-    async function checkAuth() {
-
-      const token = localStorage.getItem("access_token");
-
-      // No token -> definitely not logged in
-      if (!token) {
-        setIsLoggedIn(false);
-        setCheckingAuth(false);
-        return;
-      }
-
-      try {
-
-        const response = await fetch("http://localhost:8000/auth/me", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-
-          // Token is valid
-          setIsLoggedIn(true);
-
-        } else {
-
-          // Token is invalid/expired
-          localStorage.removeItem("access_token");
-          setIsLoggedIn(false);
-
-        }
-
-      } catch (error) {
-
-        console.error("Authentication check failed:", error);
-
-        setIsLoggedIn(false);
-
-      } finally {
-
-        setCheckingAuth(false);
-
-      }
-    }
-
-    checkAuth();
-
-  }, []);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("cancercare_logged_in") === "true"
+  );
 
 
   function handleLogin() {
@@ -105,16 +57,10 @@ function App() {
 
   function handleLogout() {
 
-    localStorage.removeItem("access_token");
+    localStorage.removeItem("cancercare_logged_in");
 
     setIsLoggedIn(false);
 
-  }
-
-
-  // Don't redirect anywhere until we know the authentication state
-  if (checkingAuth) {
-    return <div>Loading...</div>;
   }
 
 
@@ -122,6 +68,8 @@ function App() {
     <BrowserRouter>
 
       <Routes>
+        <Route path="/register" element={<Register />} />
+<Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* LOGIN */}
 
@@ -133,6 +81,7 @@ function App() {
               : <Login onLogin={handleLogin} />
           }
         />
+        
 
 
         {/* PROTECTED PAGES */}
@@ -149,11 +98,10 @@ function App() {
             path="/dashboard"
             element={<Dashboard />}
           />
-
           <Route
-            path="/ai-assistant"
-            element={<AIAssistant />}
-          />
+  path="/ai-assistant"
+  element={<AIAssistant />}
+/>
 
           <Route
             path="/symptoms"
