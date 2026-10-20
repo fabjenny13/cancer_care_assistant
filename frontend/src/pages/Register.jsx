@@ -1,22 +1,72 @@
 
 import { Link } from "react-router-dom";
+import {useState} from "react";
 
 function Register() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
 
-    const password = event.target.password.value;
-    const confirmPassword = event.target.confirmPassword.value;
+    const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  setIsCreatingAccount(true);
+
+  const form = event.currentTarget;
+  const fullName = form.fullName.value.trim();
+  const email = form.email.value.trim();
+  const password = form.password.value;
+  const confirmPassword = form.confirmPassword.value;
+
+  if (!fullName) {
+    alert("Please enter your full name.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:8000/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: fullName,
+          email,
+          password,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      const message =
+        typeof result.detail === "string"
+          ? result.detail
+          : "Registration failed. Please check your details.";
+
+      alert(message);
       return;
     }
 
+    alert("Account created successfully! Please sign in.");
+    window.location.href = "/login";
+  } catch (error) {
     alert(
-      "The registration form works! Connect it to your authentication backend to create an account."
+      "Could not connect to the server. Please try again."
     );
-  };
+  }
+  finally {
+    setIsCreatingAccount(false);
+  }
+};
 
   return (
     <main className="auth-page">
@@ -68,8 +118,12 @@ function Register() {
             required
           />
 
-          <button type="submit" className="auth-button">
-            Create account
+          <button
+          type="submit"
+          className="auth-button"
+          disabled={isCreatingAccount}
+            >
+          {isCreatingAccount ? "Creating account..." : "Create account"}
           </button>
         </form>
 
