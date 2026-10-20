@@ -115,15 +115,6 @@ function Sidebar({ onLogout }) {
 
       <div className="sidebar-bottom">
 
-        <div className="nav-item">
-          <span className="nav-icon">⚙️</span>
-          <span>Settings</span>
-        </div>
-
-        <div className="nav-item">
-          <span className="nav-icon">❓</span>
-          <span>Help & Support</span>
-        </div>
 
       </div>
 
