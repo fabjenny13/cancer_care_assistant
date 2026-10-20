@@ -4,7 +4,7 @@ OLLAMA_URL = "http://localhost:11434/api/chat"
 MODEL = "llama3.2" # change to whatever you pulled: mistral, phi3, gemma2, etc.
 
 
-def call_ollama(messages: list[dict], model: str = MODEL) -> str:
+def call_ollama(messages: list[dict], model: str = MODEL, temperature: float = 0.7) -> str:
     """Send a chat-style message list to a local Ollama model and return its reply text.
 
     messages format: [{"role": "system"|"user"|"assistant", "content": "..."}]
@@ -13,6 +13,7 @@ def call_ollama(messages: list[dict], model: str = MODEL) -> str:
         "model": model,
         "messages": messages,
         "stream": False,
+        "options": {"temperature": temperature},
     }
     response = requests.post(OLLAMA_URL, json=payload, timeout=120)
     response.raise_for_status()

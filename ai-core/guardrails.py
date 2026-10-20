@@ -49,7 +49,7 @@ def check_llm_classifier(text: str) -> bool:
     """Second-tier check for rephrased/subtler crisis language the keyword list misses.
     Uses the same local model as a zero-shot classifier."""
     prompt = CLASSIFIER_PROMPT.format(text=text)
-    result = call_ollama([{"role": "user", "content": prompt}])
+    result = call_ollama([{"role": "user", "content": prompt}], temperature=0)
     return "CRISIS" in result.strip().upper()
 
 
