@@ -38,9 +38,10 @@ def register(
 
     # Create user
     user = User(
-        email=data.email,
-        password_hash=hash_password(data.password)
-    )
+    name=data.name.strip(),
+    email=data.email,
+    password_hash=hash_password(data.password)
+)
 
     db.add(user)
     db.commit()
@@ -48,6 +49,7 @@ def register(
 
     return UserResponse(
         id=str(user.id),
+        name=user.name,
         email=user.email,
         is_active=user.is_active
     )
@@ -98,6 +100,7 @@ def get_me(
 ):
     return UserResponse(
         id=str(current_user.id),
+        name=current_user.name,
         email=current_user.email,
         is_active=current_user.is_active
     )
