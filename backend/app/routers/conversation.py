@@ -27,12 +27,34 @@ router = APIRouter(
 )
 AI_CORE_URL = os.getenv("AI_CORE_URL", "http://localhost:8001")
 
+
 @router.post("", response_model=ConversationResponse)
 def create_conversation(
     data: ConversationCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # Reuse an existing empty conversation for this user.
+    conversation = (
+        db.query(Conversation)
+        .filter(
+            Conversation.user_id == current_user.id,
+            ~Conversation.messages.any()
+        )
+        .order_by(Conversation.created_at.desc())
+        .first()
+    )
+
+    if conversation:
+        return ConversationResponse(
+            id=str(conversation.id),
+            user_id=str(conversation.user_id),
+            title=conversation.title,
+            created_at=conversation.created_at,
+            updated_at=conversation.updated_at
+        )
+
+    # No empty conversation exists, so create one.
     conversation = Conversation(
         user_id=current_user.id,
         title=data.title

@@ -1,0 +1,14 @@
+TOPIC: General cancer information, diagnosis, treatment, and supportive care
+SOURCE: National Cancer Institute (NCI), https://www.cancer.gov/about-cancer
+
+Cancer is a broad group of diseases in which abnormal cells grow in ways that can invade nearby tissue or spread to other parts of the body. Cancers differ by where they begin and by their cell and molecular features, so information about one cancer cannot automatically be applied to another. A cancer that has spread to a new organ is still named for its original site.
+
+Diagnosis may involve a medical history and examination, imaging, laboratory tests, and sometimes a biopsy. A biopsy examines a sample of tissue and is often needed to identify the cancer type. Stage describes the extent of a cancer, including factors such as tumor size and whether it has spread; grade describes how abnormal the cells look and may indicate how they are likely to grow. These terms are related but not interchangeable, and exact staging systems vary by cancer.
+
+Treatment plans depend on the cancer type and extent, test findings, prior care, overall health, and the person's goals. Options can include surgery, radiation therapy, chemotherapy, hormone therapy, immunotherapy, targeted therapy, and other approaches. Some people receive one treatment and others receive combinations. Biomarker testing may help guide treatment for some cancers. Only the oncology team can explain which options fit an individual's case.
+
+Side effects vary by treatment and person. Patients should tell their care team about new or worsening symptoms, since the team can explain which effects are expected and how they may be managed. Do not stop or change a prescribed treatment based on general information. For sudden, severe, or rapidly worsening symptoms, contact the oncology team urgently or use local emergency services.
+
+Palliative care focuses on preventing or relieving symptoms and supporting quality of life, and it can be provided alongside cancer treatment. It does not by itself mean that treatment is stopping or that a person is at the end of life. Patients can ask their team about supportive care, symptom management, psychosocial support, and what a diagnosis or treatment term means in their own situation.
+
+Useful questions for an oncology appointment include: What type of cancer is this, and what tests established the diagnosis? What do stage and grade mean in this case? What are the goals and alternatives of the proposed treatment? Which side effects should be reported, and whom should I contact after hours? Would biomarker testing, a second opinion, supportive care, or a clinical trial be relevant?

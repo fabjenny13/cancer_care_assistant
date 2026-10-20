@@ -67,33 +67,34 @@ useEffect(() => {
       setConversations(data);
 
       // Load the most recent conversation initially
-      if (data.length > 0) {
-        setConversationId(data[0].id);
-      } else {
-        // No conversations yet → create one
-        const createResponse = await fetch(
-          "http://localhost:8000/conversations",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              title: "CancerCare Assistant"
-            })
-          }
-        );
+      // Resume the most recent conversation.
+// Create one only if the user has no conversations.
+if (data.length > 0) {
+  setConversationId(data[0].id);
+} else {
+  const createResponse = await fetch(
+    `${API_URL}/conversations`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title: "CancerCare Assistant",
+      }),
+    }
+  );
 
-        if (!createResponse.ok) {
-          throw new Error("Failed to create conversation");
-        }
+  if (!createResponse.ok) {
+    throw new Error("Failed to create conversation");
+  }
 
-        const newConversation = await createResponse.json();
+  const newConversation = await createResponse.json();
 
-        setConversations([newConversation]);
-        setConversationId(newConversation.id);
-      }
+  setConversations([newConversation]);
+  setConversationId(newConversation.id);
+}
     } catch (error) {
       console.error(
         "Failed to load conversations:",
